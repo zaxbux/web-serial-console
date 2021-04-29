@@ -1,0 +1,87 @@
+body.loading {
+	--light-colour: 255, 255, 255;
+	--dark-color: 17, 24, 39;
+
+	--border-width: 4px;
+	--spinner-dimensions: 125px;
+	--outer-spinner-dimensions: calc(var(--spinner-dimensions) - var(--border-width) * 2);
+	--inner-spinner-dimensions: calc(var(--outer-spinner-dimensions) * 0.7);
+	--inner-spinner-position: calc((var(--outer-spinner-dimensions) - var(--inner-spinner-dimensions)) / 2);
+}
+
+@media (prefers-color-scheme: dark) {
+	body.loading {
+		--light-colour: 17, 24, 39;
+		--dark-color: 255, 255, 255;
+	}
+}
+
+body.loading {
+	background-color: rgb(var(--light-colour));
+}
+
+@keyframes app-loading-animation {
+	0% {
+		transform: rotate(0deg);
+	}
+
+	100% {
+		transform: rotate(360deg);
+	}
+}
+
+@keyframes anti-app-loading-animation {
+	0% {
+		transform: rotate(0deg);
+	}
+
+	100% {
+		transform: rotate(-360deg);
+	}
+}
+
+#app > .loading {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+
+	width: var(--spinner-dimensions);
+	height: var(--spinner-dimensions);
+}
+
+#app > .loading:before {
+	content: "";
+	display: block;
+	position: absolute;
+	border-width: var(--border-width);
+	border-style: solid;
+	border-radius: 50%;
+	width: var(--outer-spinner-dimensions);
+	height: var(--outer-spinner-dimensions);
+	border-bottom-color: rgb(var(--dark-color));
+	border-right-color: rgb(var(--dark-color));
+	border-top-color: rgba(var(--dark-color), 0);
+	border-left-color: rgba(var(--dark-color), 0);
+	top: 0px;
+	left: 0px;
+	animation: app-loading-animation 1s linear 0s infinite;
+}
+
+#app > .loading:after {
+	content: "";
+	display: block;
+	position: absolute;
+	border-width: var(--border-width);
+	border-style: solid;
+	border-radius: 50%;
+	width: var(--inner-spinner-dimensions);
+	height: var(--inner-spinner-dimensions);
+	border-bottom-color: rgb(var(--dark-color));
+	border-right-color: rgb(var(--dark-color));
+	border-top-color: rgba(var(--dark-color), 0);
+	border-left-color: rgba(var(--dark-color), 0);
+	top: var(--inner-spinner-position);
+	left: var(--inner-spinner-position);
+	animation: anti-app-loading-animation 0.85s linear 0s infinite;
+}

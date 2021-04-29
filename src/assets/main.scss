@@ -1,0 +1,128 @@
+@tailwind base;
+
+@layer base {
+	html, body {
+		//width: 100%;
+		//height: 100%;
+	}
+
+	html.dark {
+		@apply bg-gray-900 text-white;
+	}
+}
+
+@tailwind components;
+
+@layer components {
+	.form-group {
+		.form-control {
+			@apply px-2 py-1 text-sm;
+
+			@apply bg-gray-200 border border-gray-500 text-black;
+
+			@apply dark:bg-gray-100;
+
+			&:disabled {
+				@apply text-gray-500;
+			}
+		}
+	}
+
+	.btn {
+		// sizing
+		@apply px-2 py-1 text-sm;
+	
+		// "light" mode
+		@apply bg-gray-200 border border-gray-500 text-black;
+	
+		// "dark" mode
+		@apply dark:bg-gray-200;
+
+		&:disabled {
+			@apply text-gray-500;
+		}
+	}
+
+	.modal {
+		@apply fixed z-10 inset-0 overflow-y-auto;
+
+		.modal-wrapper {
+			@apply flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0;
+
+			.overlay {
+				@apply fixed inset-0 bg-gray-500 dark:bg-gray-700 bg-opacity-75 transition-opacity;
+			}
+
+			.modal-contents {
+				@apply inline-block align-bottom bg-white dark:bg-gray-900 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full;
+
+				.title {
+					@apply text-lg leading-6 font-medium text-gray-900 dark:text-gray-100;
+				}
+
+				.body {
+					@apply bg-white dark:bg-gray-900 px-4 pt-5 pb-4 sm:p-6 sm:pb-4;
+				}
+
+				.footer {
+					@apply bg-gray-50 dark:bg-gray-800 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse;
+
+					.btn {
+						@apply mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm;
+					}
+				}
+			}
+		}
+	}
+}
+
+@tailwind utilities;
+
+@layer utilities {
+	.divider-h {
+		@apply border-t border-current;
+	}
+
+	.divider-v {
+		@apply border-l border-current;
+	}
+
+	.xterm-full {
+		.terminal {
+			@apply h-full;
+			@apply flex;
+			@apply p-2;
+
+			.xterm-viewport {
+				//scrollbar-width: thin;          // "auto" or "thin"
+				scrollbar-color: transparent;   // scroll thumb and track
+
+				&::-webkit-scrollbar {
+					width: 1rem;               // width of the entire scrollbar
+				}
+					
+				&::-webkit-scrollbar-track {
+					@apply transition-colors;
+					background-color: rgba(0, 0, 0, 0.1);        // color of the tracking area
+					border-left: 1px solid rgba(255, 255, 255, 0.3);
+
+					
+				}
+					
+				&::-webkit-scrollbar-thumb {
+					background-color: rgba(255, 255, 255, 0.5);    // color of the scroll thumb
+					//border-radius: 20px;       // roundness of the scroll thumb
+					//border: 3px solid orange;  // creates padding around scroll thumb
+
+					&:hover {
+						background-color: rgba(255, 255, 255, 0.7);
+					}
+				}
+			}
+
+			.xterm-screen {
+				@apply mt-auto;
+			}
+		}
+	}
+}

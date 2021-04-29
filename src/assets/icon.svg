@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg version="1.1" viewBox="0 0 1000 1000" xmlns="http://www.w3.org/2000/svg">
+	<style>
+		rect {
+			fill: white;
+		}
+		g > path, g > rect {
+			fill: black;
+		}
+		@media (prefers-color-scheme: dark) {
+			rect {
+				fill: black;
+			}
+			g > path, g > rect {
+				fill: white;
+			}
+		}
+	</style>
+	<rect x="0" y="0" width="1024" height="1024"/>
+	<g>
+		
+		<rect x="64" y="192" width="128" height="640"/>
+		<path d="m320 192v640h640v-640zm128 128h384v384h-384z"/>
+	</g>
+</svg>
