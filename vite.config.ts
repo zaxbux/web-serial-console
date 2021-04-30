@@ -21,11 +21,11 @@ export default defineConfig({
 				"theme_color": "#212121",
 				"icons": [
 					{
-						"src": "assets/icon.svg",
+						"src": "/icon.svg",
 						"sizes": "any"
 					},
 					{
-						"src": "assets/icon.png",
+						"src": "/icon.png",
 						"sizes": "144x144",
 						"type": "image/png"
 					}
