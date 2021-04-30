@@ -153,7 +153,7 @@ export default defineComponent({
 		},
 	},
 	methods: {
-		serialPortSelected(value) {
+		serialPortSelected(value: boolean) {
 			this.$data.isPort = value;
 		}
 	},

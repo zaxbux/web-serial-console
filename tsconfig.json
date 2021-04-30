@@ -8,9 +8,10 @@
     "sourceMap": true,
     "resolveJsonModule": true,
     "esModuleInterop": true,
-    "lib": ["ESNext", "DOM", "DOM.Iterable", "WebWorker"],
-    "types": ["vite/client", "@types/w3c-web-serial"],
+    "lib": ["DOM", "DOM.Iterable", "ESNext"],
+    "types": ["vite/client", "vite-plugin-pwa/client", "@types/w3c-web-serial"],
     "strictNullChecks": false
   },
-  "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue"]
+  "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue"],
+  "exclude": ["node_modules", "src/sw.ts"],
 }
