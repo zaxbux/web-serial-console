@@ -72,6 +72,7 @@
 					</div>
 					<div class="footer">
 						<button class="btn" @click="closeModal">Close</button>
+						<button class="btn sm:mr-auto" @click="resetSettings">Reset</button>
 					</div>
 				</div>
 				</TransitionChild>
@@ -90,6 +91,7 @@ import {
 	DialogTitle,
 } from "@headlessui/vue";
 import TerminalThemePicker from './TerminalThemePicker.vue';
+import Settings from '../settings';
 
 export default defineComponent({
 	components: {
@@ -110,6 +112,11 @@ export default defineComponent({
 		openModal() {
 			this.isOpen = true;
 		},
+		resetSettings() {
+			if (confirm('Are you sure you want to reset all settings?')) {
+				Settings.reset();
+			}
+		}
 	},
 	setup() {
 		const isOpen = ref(false);

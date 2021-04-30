@@ -22,6 +22,11 @@ export class Settings {
 		return Settings._instance;
 	}
 
+	reset() {
+		this._storage.clear();
+		this._session.clear();
+	}
+
 	protected getBoolean(key: string, _default?: boolean): boolean {
 		const value = this._storage.getItem(key);
 
