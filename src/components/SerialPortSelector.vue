@@ -29,7 +29,9 @@ export default defineComponent({
 
 		await SerialManager.getPorts();
 
-		this.$el.value = Settings.portIndex;
+		if (this.$data.ports.length > 0) {
+			this.$el.value = Settings.portIndex;
+		}
 	},
 	methods: {
 		onInput($event: Event) {

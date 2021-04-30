@@ -40,22 +40,33 @@ export class TerminalPlatform {
 		this._terminal.unicode.activeVersion = '11'
 	}
 
-	public async writeTestPattern(): Promise<void> {
-		this._terminal.writeln('');
-		this._terminal.writeln('Welcome to the web-based serial console!');
-		this._terminal.writeln('Powered by the Web Serial API ( https://wicg.github.io/serial/ )');
-		this._terminal.writeln('');
-		this._terminal.writeln('Created by Zachary Schneider');
-		this._terminal.writeln('\thello@zacharyschneider.ca');
-		this._terminal.writeln('\thttps://www.zacharyschneider.ca');
-		this._terminal.writeln('');
-		this._terminal.writeln('Tip: To open a link, hold CTRL and click the link.');
-		this._terminal.writeln('');
-		this._terminal.writeln('Bugs: https://github.com/zaxbux/web-serial-console');
+	public writeTestPattern(): void {
+		const welcome = [
+			'',
+			'Welcome to the web-based serial console!',
+			'',
+			'Powered by:',
+			'\t* Web Serial API ( https://wicg.github.io/serial/ )',
+			'\t* Vite/Vue       ( https://vitejs.dev/ )',
+			'\t* Tailwind CSS   ( https://tailwindcss.com/ )',
+			'\t* Xterm.js       ( https://xtermjs.org/ )',
+			'',
+			'Created by:\tZachary Schneider',
+			'\t\thello@zacharyschneider.ca',
+			'\t\thttps://www.zacharyschneider.ca',
+			'',
+			'Tip: To open a link, hold CTRL and click the link.',
+			'',
+			'Source code:   https://github.com/zaxbux/web-serial-console',
+			'Features/Bugs: https://github.com/zaxbux/web-serial-console/issues',
+			'',
+		]
 
-		this._terminal.writeln('');
+		for (const line of welcome) {
+			this._terminal.writeln(line);
+		}
 
-		await terminalTestPattern(this._terminal);
+		terminalTestPattern(this._terminal);
 	}
 
 	get terminal(): Terminal {

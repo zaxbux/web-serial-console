@@ -86,6 +86,8 @@
 				<SettingsModal @close="$emit('change')"/>
 
 				<colour-scheme-toggle/>
+
+				<FullScreenToggle v-if="fullscreenEnabled" :fullscreen="fullscreen" @fullscreen="$emit('fullscreen')" />
 			</div>
 		</div>
 	</div>
@@ -106,6 +108,7 @@ import SerialFlushOnEnterCheckbox from './SerialFlushOnEnterCheckbox.vue';
 import SerialFlowControlCheckbox from './SerialFlowControlCheckbox.vue';
 
 import ColourSchemeToggle from './ColourSchemeToggle.vue';
+import FullScreenToggle from './FullScreenToggle.vue';
 import HelpIcon from './HelpIcon.vue';
 import SettingsModal from './SettingsModal.vue';
 
@@ -123,23 +126,29 @@ export default defineComponent({
 		HelpIcon,
 		Popover, PopoverButton, PopoverPanel,
 		SettingsModal,
+		FullScreenToggle,
 	},
 	props: [
 		'connected',
 		'connecting',
 		'disconnecting',
+		'fullscreen',
 	],
 	emits: [
 		'connect',
 		'clear',
 		'download',
 		'request-port',
-		'change'
+		'change',
+		'fullscreen',
 	],
 	computed: {
 		disableInputs(): boolean {
 			return this.connecting || this.connected || this.disconnecting;
-		}
+		},
+		fullscreenEnabled(): boolean {
+			return document.fullscreenEnabled;
+		},
 	},
 })
 </script>

@@ -1,5 +1,16 @@
 <template>
-	<Toolbar :connected="connected" :connecting="connecting" :disconnecting="disconnecting" @connect="toggleConsole(connected)" @clear="resetTerminal()" @download="downloadContents()" @request-port="requestPort()" @change="setTerminalOptions()" />
+	<Toolbar
+		:connected="connected"
+		:connecting="connecting"
+		:disconnecting="disconnecting"
+		:fullscreen="fullscreen"
+		@connect="toggleConsole(connected)"
+		@clear="resetTerminal()"
+		@download="downloadContents()"
+		@request-port="requestPort()"
+		@change="setTerminalOptions()"
+		@fullscreen="requestFullscreen()"
+	/>
 
 	<Xterm ref="xterm" @ready="onXtermReady" @title-change="onXtermTitle" @line-feed="onXtermLineFeed" />
 
@@ -17,7 +28,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { ref, defineComponent } from 'vue';
 
 import Toolbar from './Toolbar.vue';
 import Xterm from './Xterm.vue';
@@ -123,6 +134,13 @@ export default defineComponent({
 			this.$options.platform.terminal.reset();
 			this.$data.lines = 0;
 		},
+		requestFullscreen() {
+			try {
+				this.xterm.$el.requestFullscreen();
+			} catch (error) {
+				log.warn('fullscreen rejected', error);
+			}
+		},
 		async requestPort(): Promise<void> {
 			try {
 				await SerialManager.requestPort();
@@ -138,6 +156,14 @@ export default defineComponent({
 			disconnecting: false,
 			statusMessages: ['disconnected'],
 			lines: 0,
+			fullscreen: false,
+		};
+	},
+	setup() {
+		const xterm = ref();
+
+		return {
+			xterm,
 		};
 	},
 	mounted() {

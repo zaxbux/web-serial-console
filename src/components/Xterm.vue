@@ -22,7 +22,7 @@ export default defineComponent({
 
 		return { platform };
 	},
-	async mounted(): Promise<void> {
+	mounted(): Promise<void> {
 		this.platform = new TerminalPlatform({
 			cursorStyle: this.$settings.cursorStyle,
 			bellSound: Settings.bellSound,
@@ -36,7 +36,7 @@ export default defineComponent({
 		this.platform.terminal.onLineFeed(() => this.$emit('line-feed'));
 
 		this.platform.terminal.open(this.$el);
-		await this.platform.writeTestPattern();
+		this.platform.writeTestPattern();
 		this.platform.fitAddon.fit();
 
 		window.addEventListener('resize', () => {
