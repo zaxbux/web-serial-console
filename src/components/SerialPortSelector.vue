@@ -1,7 +1,7 @@
 <template>
 	<select @input="onInput">
-		<option disabled selected v-if="!(ports.length > 0)">no ports available</option>
-		<option disabled selected v-else>select a port...</option>
+		<option value="-1" disabled selected>{{ ports.length > 0 ? 'select a port...' : 'no ports available' }}</option>
+
 		<option v-for="(port, index) in ports" v-bind:key="index" :value="index">{{ port[1].label }}</option>
 	</select>
 </template>
@@ -12,9 +12,7 @@ import SerialManager, { SerialPortMap } from '../serial-port-manager';
 import Settings from '../settings';
 
 export default defineComponent({
-	emits: [
-		'update:value'
-	],
+	emits: ['port-selected'],
 	data() {
 		return {
 			ports: [],
@@ -31,6 +29,20 @@ export default defineComponent({
 
 		if (this.$data.ports.length > 0) {
 			this.$el.value = Settings.portIndex;
+
+			this.$emit('port-selected', Number.parseInt(this.$el.value) >= 0);
+		}
+	},
+	watch: {
+		ports(ports) {
+			if (!(ports.length > 0)) {
+				// no ports available, force value
+				this.$el.value = -1;
+			}
+			
+			this.$emit('port-selected', Number.parseInt(this.$el.value) >= 0);
+
+			return;
 		}
 	},
 	methods: {
@@ -40,7 +52,7 @@ export default defineComponent({
 
 			Settings.portIndex = portIndex;
 
-			this.$emit('update:value', port);
+			this.$emit('port-selected', portIndex >= 0);
 		}
 	}
 })
