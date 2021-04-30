@@ -9,7 +9,7 @@ import Settings from '../settings';
 export default defineComponent({
 	methods: {
 		onInput($event: Event) {
-			Settings.echo = $event.target.checked;
+			Settings.echo = ($event.target as HTMLInputElement).checked;
 		},
 	},
 	mounted() {

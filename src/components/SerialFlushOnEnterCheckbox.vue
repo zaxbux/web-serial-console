@@ -9,7 +9,7 @@ import Settings from '../settings';
 export default defineComponent({
 	methods: {
 		onInput($event: Event) {
-			Settings.flushOnEnter = $event.target.checked;
+			Settings.flushOnEnter = ($event.target as HTMLInputElement).checked;
 		},
 	},
 	mounted() {

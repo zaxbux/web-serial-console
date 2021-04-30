@@ -13,7 +13,7 @@ import Settings from '../settings';
 export default defineComponent({
 	methods: {
 		onInput($event: Event) {
-			Settings.stopBits = Number.parseInt($event.target.value);
+			Settings.stopBits = Number.parseInt(($event.target as HTMLInputElement).value);
 		},
 	},
 	data() {

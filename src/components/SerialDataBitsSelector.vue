@@ -13,7 +13,7 @@ import Settings from '../settings';
 export default defineComponent({
 	methods: {
 		onInput($event: Event) {
-			Settings.dataBits = Number.parseInt($event.target.value);
+			Settings.dataBits = Number.parseInt(($event.target as HTMLInputElement).value);
 		},
 	},
 	data() {

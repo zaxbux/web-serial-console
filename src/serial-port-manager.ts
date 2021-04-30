@@ -2,13 +2,13 @@ import { Dispatcher } from './utils/dispatcher';
 import Log from './utils/log';
 import { niceName } from './utils/usb-devices';
 
-type SerialPortMap = Map<SerialPort, SerialPortMetadata>;
+export type SerialPortMap = Map<SerialPort, SerialPortMetadata>;
 
 interface SerialEvent extends Event {
 	target: SerialPort;
 }
 
-interface SerialPortMetadata {
+export interface SerialPortMetadata {
 	label: String;
 	info: SerialPortInfo;
 }

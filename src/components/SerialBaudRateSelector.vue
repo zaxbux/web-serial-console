@@ -13,7 +13,7 @@ import Settings from '../settings';
 export default defineComponent({
 	methods: {
 		onInput($event: Event) {
-			Settings.baudRate = Number.parseInt($event.target.value);
+			Settings.baudRate = Number.parseInt(($event.target as HTMLInputElement).value);
 		},
 	},
 	data() {

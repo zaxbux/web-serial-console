@@ -8,7 +8,7 @@
 
 <script lang="ts">
 import { inject, defineComponent } from 'vue';
-import SerialManager from '../serial-port-manager';
+import SerialManager, { SerialPortMap } from '../serial-port-manager';
 import Settings from '../settings';
 
 export default defineComponent({
@@ -21,7 +21,7 @@ export default defineComponent({
 		}
 	},
 	async mounted() {
-		SerialManager.on('update', (data) => {
+		SerialManager.on('update', (data: {ports: SerialPortMap}) => {
 			console.log('update ports');
 
 			this.$data.ports = Array.from(data.ports);
@@ -33,7 +33,7 @@ export default defineComponent({
 	},
 	methods: {
 		onInput($event: Event) {
-			const portIndex = Number.parseInt($event.target.value);
+			const portIndex = Number.parseInt(($event.target as HTMLInputElement).value);
 			const port = this.$data.ports[portIndex];
 
 			Settings.portIndex = portIndex;

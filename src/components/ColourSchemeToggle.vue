@@ -15,15 +15,15 @@ export default defineComponent({
 		};
 	},
 	computed: {
-		icon() {
-			return ['far', this.darkMode ? 'star-and-crescent' : 'sun'];
+		icon(): string[] {
+			return ['far', this.$data.darkMode ? 'star-and-crescent' : 'sun'];
 		}
 	},
 	methods: {
 		toggleColourScheme() {
 			this.$data.darkMode = !this.$data.darkMode;
 
-			window.localStorage.setItem('theme', this.$data.darkMode ? 'dark' : 'light');
+			window.localStorage.setItem('theme', (this as any).$data.darkMode ? 'dark' : 'light');
 
 			document.documentElement.classList.toggle('dark', this.$data.darkMode);
 		}

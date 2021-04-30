@@ -137,8 +137,8 @@ export default defineComponent({
 		'change'
 	],
 	computed: {
-		disableInputs() {
-			return this.$props.connecting || this.$props.connected || this.$props.disconnecting;
+		disableInputs(): boolean {
+			return this.connecting || this.connected || this.disconnecting;
 		}
 	},
 })

@@ -13,7 +13,7 @@ import Settings from '../settings';
 export default defineComponent({
 	methods: {
 		onInput($event: Event) {
-			Settings.parity = $event.target.value;
+			Settings.parity = (($event.target as HTMLInputElement).value as ParityType);
 		},
 	},
 	data() {

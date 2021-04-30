@@ -9,7 +9,7 @@ import Settings from '../settings';
 export default defineComponent({
 	methods: {
 		onInput($event: Event) {
-			Settings.flowControl = !$event.target.checked ? 'none' : 'hardware';
+			Settings.flowControl = !($event.target as HTMLInputElement).checked ? 'none' : 'hardware';
 		},
 	},
 	mounted() {

@@ -24,7 +24,7 @@ import Xterm from './Xterm.vue';
 
 import Settings from '../settings';
 import Log from '../utils/log';
-import SerialManager, { getPortMetadata } from '../serial-port-manager';
+import SerialManager, { getPortMetadata, SerialPortMetadata } from '../serial-port-manager';
 import { SerialPortConsole } from '../serial-port-console';
 import { TerminalPlatform } from '../xterm-extended';
 import { fauxLink } from '../utils/fauxLink';
@@ -38,7 +38,7 @@ export default defineComponent({
 	},
 	computed: {
 		statusText() {
-			return this.$data.statusMessages.slice(-1).pop();
+			return (this as any).$data.statusMessages.slice(-1).pop();
 		}
 	},
 	methods: {
@@ -126,7 +126,7 @@ export default defineComponent({
 		async requestPort(): Promise<void> {
 			try {
 				await SerialManager.requestPort();
-			} catch (error: Error) {
+			} catch (error) {
 				this.statusMessages.push(error.message);
 			}
 		}
@@ -141,12 +141,12 @@ export default defineComponent({
 		};
 	},
 	mounted() {
-		SerialManager.on('connect', (data) => {
-			this.$data.statusMessages.push(`${data.metadata.label} connected`);
+		SerialManager.on('connect', (data: { port: SerialPort, metadata: SerialPortMetadata}) => {
+			(this as any).$data.statusMessages.push(`${data.metadata.label} connected`);
 		});
 
-		SerialManager.on('disconnect', (data) => {
-			this.$data.statusMessages.push(`${data.metadata.label} disconnected`);
+		SerialManager.on('disconnect', (data: { port: SerialPort, metadata: SerialPortMetadata}) => {
+			(this as any).$data.statusMessages.push(`${data.metadata.label} disconnected`);
 		});
 	}
 });
