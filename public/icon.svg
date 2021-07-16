@@ -1,25 +1,20 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg version="1.1" viewBox="0 0 1000 1000" xmlns="http://www.w3.org/2000/svg">
-	<style>
-		rect {
-			fill: white;
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+<style>
+		#b {
+			fill: #000;
 		}
-		g > path, g > rect {
-			fill: black;
+		#f {
+			fill: #fff;
 		}
 		@media (prefers-color-scheme: dark) {
-			rect {
-				fill: black;
+			#b {
+				fill: #fff;
 			}
-			g > path, g > rect {
-				fill: white;
+			#f {
+				fill: #000;
 			}
 		}
 	</style>
-	<rect x="0" y="0" width="1024" height="1024"/>
-	<g>
-		
-		<rect x="64" y="192" width="128" height="640"/>
-		<path d="m320 192v640h640v-640zm128 128h384v384h-384z"/>
-	</g>
+	<path id="b" d="M0 0h128v128H0z" />
+	<path id="f" d="M60 106h48v8H60zM20 51.66l28.28 28.28L20 108.22l5.66 5.66L53.94 85.6l5.66-5.66-5.66-5.66L25.66 46 20 51.66z" />
 </svg>
