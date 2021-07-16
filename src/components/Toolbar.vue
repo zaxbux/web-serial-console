@@ -6,7 +6,7 @@
 
 				<div class="flex">
 					<serial-port-selector id="serial-port-selector" class="form-control w-48 rounded-r-none min-h-full" :disabled="disableInputs" @port-selected="serialPortSelected" />
-					<button class="btn border-l-0 rounded-l-none min-h-full" title="add port" @click="$emit('request-port')" :disabled="disableInputs"><font-awesome-icon :icon="['far', 'plus']" fixed-width /></button>
+					<button class="btn border-l-0 rounded-l-none min-h-full" title="add port" @click="$emit('request-port')" :disabled="disableInputs"><Icon :path="mdiPlus"/></button>
 				</div>
 			</div>
 
@@ -15,13 +15,14 @@
 					:title="connected ? 'disconnect' : 'connect'" @click="$emit('connect')"
 					:disabled="connecting || disconnecting || !isPort"
 				>
-						<font-awesome-icon v-if="connected" :icon="['far', 'times-octagon']" fixed-width />
-						<font-awesome-icon v-else :icon="['far', 'plug']" fixed-width />
+						
+						
+						<Icon :path="connected ? mdiCloseOctagonOutline : mdiPowerPlug"/>
 				</button>
 			</div>
 
 			<div class="mt-auto">
-				<button class="btn" title="clear" @click="$emit('clear')" :disabled="connecting || disconnecting"><font-awesome-icon :icon="['far', 'times-square']" fixed-width /></button>
+				<button class="btn" title="clear" @click="$emit('clear')" :disabled="connecting || disconnecting"><Icon :path="mdiCloseBoxOutline"/></button>
 			</div>
 
 			<div class="divider-v opacity-20 mt-6"></div>
@@ -36,7 +37,7 @@
 
 			<div class="mt-auto">
 			<Popover class="relative">
-				<PopoverButton class="btn" title="advanced options" :disabled="connecting || disconnecting">Advanced&nbsp;<font-awesome-icon :icon="['far', 'chevron-down']" fixed-width /></PopoverButton>
+				<PopoverButton class="btn" title="advanced options" :disabled="connecting || disconnecting">Advanced&nbsp;<Icon :path="mdiChevronDown" class="inline-block"/></PopoverButton>
 
 				<PopoverPanel class="absolute z-10 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 shadow-lg p-4 min-w-max">
 					<div class="flex flex-wrap gap-4">
@@ -81,7 +82,7 @@
 			</div>
 
 			<div class="mt-auto ml-auto flex gap-2">
-				<button class="btn" title="download contents of terminal" @click="$emit('download')" :disabled="connecting || disconnecting">export <font-awesome-icon :icon="['far', 'save']" fixed-width /></button>
+				<button class="btn" title="download contents of terminal" @click="$emit('download')" :disabled="connecting || disconnecting">export <Icon :path="mdiExportVariant" class="inline-block"/></button>
 
 				<SettingsModal @close="$emit('change')"/>
 
@@ -113,6 +114,8 @@ import HelpIcon from './HelpIcon.vue';
 import SettingsModal from './SettingsModal.vue';
 
 import Settings from '../settings';
+
+import { mdiChevronDown, mdiCloseBoxOutline, mdiCloseOctagonOutline, mdiExportVariant, mdiPlus, mdiPowerPlug } from '@mdi/js'
 
 export default defineComponent({
 	components: {
@@ -159,6 +162,12 @@ export default defineComponent({
 	},
 	data() {
 		return {
+			mdiChevronDown,
+			mdiCloseBoxOutline,
+			mdiCloseOctagonOutline,
+			mdiExportVariant,
+			mdiPlus,
+			mdiPowerPlug,
 			isPort: false,
 		}
 	},

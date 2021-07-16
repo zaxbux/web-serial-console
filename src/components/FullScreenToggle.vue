@@ -1,12 +1,14 @@
 <template>
 	<button class="btn" title="fullscreen" @click="$emit('fullscreen')">
-		<font-awesome-icon v-if="fullscreen" :icon="['far', 'compress-wide']" fixed-width />
-		<font-awesome-icon v-else :icon="['far', 'expand-wide']" fixed-width />
+		
+		
+		<Icon :path="fullscreen ? mdiFullscreen : mdiFullscreenExit"/>
 	</button>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent } from 'vue';
+import { mdiFullscreen, mdiFullscreenExit } from '@mdi/js';
 
 export default defineComponent({
 	props: [
@@ -15,5 +17,6 @@ export default defineComponent({
 	emits: [
 		'fullscreen',
 	],
+	data: () => ({mdiFullscreen, mdiFullscreenExit}),
 })
 </script>

@@ -10,7 +10,8 @@
 				<div class="body">
 					<div class="sm:flex sm:items-start">
 						<div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
-							<font-awesome-icon :icon="['far', 'exclamation-triangle']" fixed-width class="text-red-600" aria-hidden="true" />
+							
+							<Icon :path="mdiAlert" class="text-red-600"/>
 						</div>
 						<div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
 							<DialogTitle as="h3" class="title">Error!</DialogTitle>
@@ -22,7 +23,7 @@
 				</div>
 				<div class="footer">
 					<a class="btn" href="https://developer.mozilla.org/en-US/docs/Web/API/Navigator/serial#browser_compatibility" target="_blank" rel="noopener">
-						Learn more&nbsp;<font-awesome-icon class="my-auto" :icon="['far', 'arrow-right']" fixed-width/>
+						Learn more&nbsp;<Icon :path="mdiArrowRight" class="my-auto"/>
 					</a>
 				</div>
 			</div>
@@ -37,6 +38,7 @@ import {
 	DialogOverlay,
 	DialogTitle,
 } from "@headlessui/vue";
+import { mdiAlert, mdiArrowRight } from '@mdi/js';
 
 export default defineComponent({
 	components: {
@@ -44,5 +46,6 @@ export default defineComponent({
 		DialogOverlay,
 		DialogTitle,
 	},
+	data: () => ({ mdiAlert, mdiArrowRight }),
 });
 </script>

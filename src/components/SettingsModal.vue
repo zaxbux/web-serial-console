@@ -1,5 +1,5 @@
 <template>
-	<button class="btn" title="settings" type="button" @click="openModal"><font-awesome-icon :icon="['far', 'cog']" fixed-width /></button>
+	<button class="btn" title="settings" type="button" @click="openModal"><Icon :path="mdiCog"/></button>
 
 	<TransitionRoot appear :show="isOpen" as="template">
 		<Dialog as="div" static class="modal" :open="isOpen" @close="closeModal">
@@ -92,6 +92,7 @@ import {
 } from "@headlessui/vue";
 import TerminalThemePicker from './TerminalThemePicker.vue';
 import Settings from '../settings';
+import { mdiCog } from '@mdi/js';
 
 export default defineComponent({
 	components: {
@@ -103,6 +104,7 @@ export default defineComponent({
 		TerminalThemePicker,
 	},
 	emits: ['close'],
+	data: () => ({ mdiCog }),
 	methods: {
 		closeModal() {
 			this.isOpen = false;

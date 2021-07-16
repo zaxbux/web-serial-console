@@ -1,6 +1,6 @@
-node_modules/
-dist/
-dist-ssr/
+*.log
 *.local
 yarn.lock
-yarn-error.log
+dist/
+dist-ssr/
+node_modules/

@@ -37,6 +37,7 @@
     "@fortawesome/pro-regular-svg-icons": "^5.15.3",
     "@fortawesome/vue-fontawesome": "^3.0.0-3",
     "@headlessui/vue": "^1.0.0",
+    "@mdi/js": "^5.9.55",
     "source-code-pro": "^2.38.0",
     "vue": "^3.0.5",
     "xterm": "^4.11.0",

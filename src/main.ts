@@ -1,7 +1,7 @@
 import { createApp } from 'vue';
 import App from './App.vue';
 import './assets/main.scss';
-import { FontAwesomeIcon } from './plugins/fontawesome';
+import Icon from './components/Icon.vue'
 import settings from './plugins/settings';
 import './utils/dark-mode';
 import Notify from './utils/notifications';
@@ -16,5 +16,5 @@ const updateSW = registerSW({
 
 createApp(App)
 	.use(settings)
-	.component('font-awesome-icon', FontAwesomeIcon)
+	.component('Icon', Icon)
 	.mount('#app');

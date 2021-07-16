@@ -16,7 +16,8 @@
 
 	<div class="px-2 py-1 bg-gray-600 text-white dark:bg-gray-300 dark:text-black flex gap-2">
 		<div>
-			<font-awesome-icon v-if="connected" :icon="['far', 'play-circle']" fixed-width class="text-green-500" /><font-awesome-icon v-else :icon="['far', 'stop-circle']" fixed-width class="text-red-500" />
+			
+			<Icon :path="connected ? mdiPlayCircleOutline : mdiStopCircleOutline" :class="connected ? 'text-green-500' : 'text-red-500'"/>
 		</div>
 
 		<div class="divider-v my-1 opacity-50"></div>
@@ -39,6 +40,7 @@ import SerialManager, { getPortMetadata, SerialPortMetadata } from '../serial-po
 import { SerialPortConsole } from '../serial-port-console';
 import { TerminalPlatform } from '../xterm-extended';
 import { fauxLink } from '../utils/fauxLink';
+import { mdiPlayCircleOutline, mdiStopCircleOutline } from '@mdi/js';
 
 const log = new Log('console');
 
@@ -162,6 +164,8 @@ export default defineComponent({
 			statusMessages: ['disconnected'],
 			lines: 0,
 			fullscreen: false,
+			mdiPlayCircleOutline,
+			mdiStopCircleOutline,
 		};
 	},
 	setup() {
