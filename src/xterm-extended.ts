@@ -29,7 +29,7 @@ export class TerminalPlatform {
 		this._terminal.loadAddon(this._addons.serialize);
 
 		this._terminal.loadAddon(new WebLinksAddon((event, uri) => {
-			if (event.ctrlKey) {
+			if (event.ctrlKey || event.metaKey) {
 				if (confirm(`Continue to "${uri}"?`)) {
 					window.open(uri, );
 				}
