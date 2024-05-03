@@ -57,7 +57,7 @@ function contrastColour(terminal: Terminal, colour: number) {
 /**
  * Print a coloured block with the number of that colour
  */
-async function printColour(terminal: Terminal, colour: number) {
+function printColour(terminal: Terminal, colour: number) {
 	const contrast = contrastColour(terminal, colour);
 	const padded = colour.toString().padStart(3, ' ');
 
@@ -72,9 +72,9 @@ async function printColour(terminal: Terminal, colour: number) {
  * @param start 
  * @param length 
  */
-async function printRun(terminal: Terminal, start: number, length: number) {
+function printRun(terminal: Terminal, start: number, length: number) {
 	for (let i = start; i < start + length && i < printableColours; i++) {
-		await printColour(terminal, i);
+		printColour(terminal, i);
 	}
 
 	terminal.write('  ');
@@ -83,7 +83,7 @@ async function printRun(terminal: Terminal, start: number, length: number) {
 /**
  * Print blocks of colours
  */
-async function printBlocks(terminal: Terminal, start: number, end: number, cols: number, rows: number, perLine: number) {
+function printBlocks(terminal: Terminal, start: number, end: number, cols: number, rows: number, perLine: number) {
 	const blockLength = cols * rows;
 
 	// print sets of blocks
@@ -94,7 +94,7 @@ async function printBlocks(terminal: Terminal, start: number, end: number, cols:
 		for (let row = 0; row < rows; row ++) {
 			// Print block columns for all blocks on the line
 			for (let block = 0; block < perLine; block ++) {
-				await printRun(terminal, i + (block * blockLength), cols);
+				printRun(terminal, i + (block * blockLength), cols);
 			}
 
 			i += cols;
@@ -107,10 +107,10 @@ async function printBlocks(terminal: Terminal, start: number, end: number, cols:
 /**
  * @see https://gist.githubusercontent.com/HaleTom/89ffe32783f89f403bba96bd7bcd1263
  */
-export default async function (terminal: Terminal) {
+export default function (terminal: Terminal) {
 
-	await printRun(terminal, 0, 16);
+	printRun(terminal, 0, 16);
 	terminal.writeln('');
-	await printBlocks(terminal, 16, 231, 6, 6, 3);
-	await printBlocks(terminal, 232, 255, 12, 2, 1);
+	printBlocks(terminal, 16, 231, 6, 6, 3);
+	printBlocks(terminal, 232, 255, 12, 2, 1);
 }
