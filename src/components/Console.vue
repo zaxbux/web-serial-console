@@ -88,6 +88,11 @@ export default defineComponent({
 		},
 		setTerminalOptions() {
 			this.$options.platform.terminal.setOption('theme', Settings.themes.default);
+			this.$options.platform.terminal.setOption('cursorStyle', Settings.cursorStyle);
+			this.$options.platform.terminal.setOption('bellStyle', Settings.bellStyle);
+			this.$options.platform.terminal.setOption('cursorBlink', Settings.cursorBlink);
+			
+			this.xterm.focus();
 		},
 		async toggleConsole(connected: boolean): Promise<void> {
 			const port = SerialManager.getPort(Settings.portIndex);
