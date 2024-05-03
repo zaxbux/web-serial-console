@@ -1,5 +1,5 @@
 <template>
-	<Toolbar :connected="connected" :connecting="connecting" :disconnecting="disconnecting" @connect="toggleConsole(connected)" @clear="resetTerminal()" @download="downloadContents()" @request-port="requestPort()" @change="setTerminalOptions()" />
+	<Toolbar :connected="connected" :connecting="connecting" :disconnecting="disconnecting" @connect="toggleConsole(connected)" @clear="resetTerminal()" @download="downloadContents()" @request-port="requestPort()" @change="setTerminalOptions()" @fullscreen="requestFullscreen()" />
 
 	<Xterm ref="xterm" @ready="onXtermReady" @title-change="onXtermTitle" @line-feed="onXtermLineFeed" />
 
@@ -17,7 +17,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { ref, defineComponent } from 'vue';
 
 import Toolbar from './Toolbar.vue';
 import Xterm from './Xterm.vue';
@@ -134,7 +134,14 @@ export default defineComponent({
 			} catch (error) {
 				this.statusMessages.push(error.message);
 			}
-		}
+		},
+		requestFullscreen() {
+			try {
+				this.xterm.$el.requestFullscreen();
+			} catch (error) {
+				log.warn('fullscreen rejected', error);
+			}
+		},
 	},
 	data() {
 		return {
@@ -143,6 +150,13 @@ export default defineComponent({
 			disconnecting: false,
 			statusMessages: ['disconnected'],
 			lines: 0,
+			fullscreen: false,
+		};
+	},
+	setup() {
+		const xterm = ref();
+		return {
+			xterm,
 		};
 	},
 	mounted() {

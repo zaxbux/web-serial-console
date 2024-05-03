@@ -17,6 +17,8 @@ import {
 	faCog,
 	faChevronDown,
 	faChevronUp,
+	faExpandWide,
+	faCompressWide,
 	
 } from '@fortawesome/pro-regular-svg-icons';
 
@@ -37,7 +39,8 @@ library.add({
 	faCog,
 	faChevronDown,
 	faChevronUp,
-	
+	faExpandWide,
+	faCompressWide,
 });
 
 export { FontAwesomeIcon };
