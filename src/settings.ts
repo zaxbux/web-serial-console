@@ -1,4 +1,4 @@
-import { ITheme } from 'xterm';
+import { ITheme } from '@xterm/xterm';
 import defaultBellSound from './utils/default-bell-sound';
 
 type CursorStyle = 'block' | 'underline' | 'bar';

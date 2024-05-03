@@ -16,7 +16,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { ITheme } from 'xterm';
+import { ITheme } from '@xterm/xterm';
 
 export default defineComponent({
 	methods: {

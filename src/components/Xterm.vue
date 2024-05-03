@@ -2,12 +2,12 @@
 	<div class="xterm-container xterm-full" />
 </template>
 <script lang="ts">
-import 'xterm/css/xterm.css';
+import '@xterm/xterm/css/xterm.css';
 import 'source-code-pro/source-code-pro.css';
 import { provide, ref, defineComponent } from 'vue';
 import Settings from '../settings';
 import { TerminalPlatform } from '../xterm-extended';
-import { ITerminalOptions } from 'xterm';
+import { ITerminalOptions } from '@xterm/xterm';
 
 
 export default defineComponent({
@@ -30,6 +30,7 @@ export default defineComponent({
 			fontFamily: Settings.fontFamily,
 			scrollback: (Settings.scrollback as number),
 			theme: Settings.themes.default,
+			allowProposedApi: true,
 		});
 
 		this.platform.terminal.onTitleChange((title: string) => this.$emit('title-change', title));

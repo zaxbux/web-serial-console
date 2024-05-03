@@ -1,4 +1,4 @@
-import { Terminal } from 'xterm';
+import { Terminal } from '@xterm/xterm';
 
 declare interface SerialPortConsoleCallbacks {
 	onConnecting(options: SerialOptions): void;
