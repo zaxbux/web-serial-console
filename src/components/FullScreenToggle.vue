@@ -4,15 +4,12 @@
 		<font-awesome-icon v-else :icon="['far', 'expand-wide']" fixed-width />
 	</button>
 </template>
+<script setup lang="ts">
+defineProps<{
+	fullscreen: boolean
+}>()
 
-<script lang="ts">
-import { defineComponent } from 'vue'
-export default defineComponent({
-	props: [
-		'fullscreen'
-	],
-	emits: [
-		'fullscreen',
-	],
-})
+defineEmits<{
+	(event: 'fullscreen'): void
+}>()
 </script>

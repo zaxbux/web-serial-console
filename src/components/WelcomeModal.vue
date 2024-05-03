@@ -33,8 +33,7 @@
 		</div>
 	</Dialog>
 </template>
-
-<script lang="ts">
+<script setup lang="ts">
 import { ref, defineComponent } from "vue";
 import {
 	Dialog,
@@ -42,33 +41,22 @@ import {
 	DialogTitle,
 } from "@headlessui/vue";
 import SerialManager from '../serial-port-manager';
+import {Settings} from '../settings';
 
-export default defineComponent({
-	components: {
-		Dialog,
-		DialogOverlay,
-		DialogTitle,
-	},
-	methods: {
-		async requestPort() {
-			try {
-				await SerialManager.requestPort();
-			} catch (error) {
-				//
-			}
-		},
-		commitWelcome() {
-			this.isOpen = false;
+const isOpen = ref(true)
 
-			this.$settings.showWelcome = false;
-		}
-	},
-	setup() {
-		const isOpen = ref(true)
 
-		return {
-			isOpen,
-		}
-	},
-});
+async function requestPort() {
+	try {
+		await SerialManager.requestPort();
+	} catch (error) {
+		//
+	}
+}
+
+function commitWelcome() {
+	isOpen.value = false;
+
+	Settings.showWelcome = false;
+}
 </script>

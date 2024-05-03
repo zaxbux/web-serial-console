@@ -1,31 +1,21 @@
 <template>
-	<select @input="onInput">
+	<select v-model="value">
 		<option v-for="option in options" v-bind:key="option.value" :value="option.value">
 			{{ option.text }}
 		</option>
 	</select>
 </template>
-
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script setup lang="ts">
+import { computed } from 'vue';
 import Settings from '../settings';
 
-export default defineComponent({
-	methods: {
-		onInput($event: Event) {
-			Settings.stopBits = Number.parseInt(($event.target as HTMLInputElement).value);
-		},
-	},
-	data() {
-		return {
-			options: [
-				{ value: 1, text: '1' },
-				{ value: 2, text: '2' },
-			],
-		};
-	},
-	mounted() {
-		this.$el.value = Settings.stopBits;
-	},
+const options = [
+	{ value: 1, text: '1' },
+	{ value: 2, text: '2' },
+]
+
+const value = computed({
+	get: () => Settings.stopBits,
+	set: (v: number) => Settings.stopBits = v
 })
 </script>

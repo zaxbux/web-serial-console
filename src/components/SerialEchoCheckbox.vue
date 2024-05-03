@@ -1,19 +1,12 @@
 <template>
-	<input type="checkbox" @change="onInput">
+	<input type="checkbox" v-model="value">
 </template>
-
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script setup lang="ts">
+import { computed } from 'vue';
 import Settings from '../settings';
 
-export default defineComponent({
-	methods: {
-		onInput($event: Event) {
-			Settings.echo = ($event.target as HTMLInputElement).checked;
-		},
-	},
-	mounted() {
-		this.$el.checked = Settings.echo;
-	},
-})
+const value = computed({
+	get: () => Settings.echo,
+	set: (v: string) => Settings.echo = v,
+});
 </script>

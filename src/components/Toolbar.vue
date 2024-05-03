@@ -92,9 +92,8 @@
 		</div>
 	</div>
 </template>
-
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script setup lang="ts">
+import { ref, computed } from 'vue';
 import { Popover, PopoverButton, PopoverPanel } from "@headlessui/vue";
 
 import SerialPortSelector from './SerialPortSelector.vue';
@@ -114,52 +113,27 @@ import SettingsModal from './SettingsModal.vue';
 
 import Settings from '../settings';
 
-export default defineComponent({
-	components: {
-		SerialPortSelector,
-		SerialBaudRateSelector,
-		SerialDataBitsSelector,
-		SerialParitySelector,
-		SerialStopBitsSelector,
-		SerialEchoCheckbox,
-		SerialFlushOnEnterCheckbox,
-		SerialFlowControlCheckbox,
-		ColourSchemeToggle,
-		HelpIcon,
-		Popover, PopoverButton, PopoverPanel,
-		SettingsModal,
-		FullScreenToggle,
-	},
-	props: [
-		'connected',
-		'connecting',
-		'disconnecting',
-	],
-	emits: [
-		'connect',
-		'clear',
-		'download',
-		'request-port',
-		'change',
-		'fullscreen',
-	],
-	computed: {
-		disableInputs(): boolean {
-			return this.connecting || this.connected || this.disconnecting;
-		},
-		fullscreenEnabled(): boolean {
-			return document.fullscreenEnabled;
-		},
-	},
-	methods: {
-		serialPortSelected(value) {
-			this.$data.isPort = value;
-		}
-	},
-	data() {
-		return {
-			isPort: false,
-		}
-	},
-})
+const props = defineProps<{
+	connected: boolean,
+	connecting: boolean,
+	disconnecting: boolean,
+}>()
+
+defineEmits<{
+	(event: 'connect'): void
+	(event: 'clear'): void
+	(event: 'download'): void
+	(event: 'request-port'): void
+	(event: 'change'): void
+	(event: 'fullscreen'): void
+}>()
+
+const isPort = ref(false)
+
+const disableInputs = computed(() => props.connecting || props.connected || props.disconnecting);
+const fullscreenEnabled = computed(()=>document.fullscreenEnabled);
+
+function serialPortSelected(value) {
+	isPort.value = value;
+}
 </script>

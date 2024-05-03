@@ -1,32 +1,20 @@
 <template>
-	<button class="btn" title="toggle colour scheme" @click="toggleColourScheme()">
+	<button class="btn" title="toggle colour scheme" @click="toggleColourScheme">
 		<font-awesome-icon v-if="darkMode" :icon="['far', 'lightbulb-slash']" fixed-width />
 		<font-awesome-icon v-else :icon="['far', 'lightbulb-on']" fixed-width />
 	</button>
 </template>
+<script setup lang="ts">
+import { computed } from 'vue'
 
-<script lang="ts">
-import { defineComponent } from 'vue'
+let darkMode = document.documentElement.classList.contains('dark')
+const icon = computed(() => (['far', darkMode ? 'star-and-crescent' : 'sun']))
 
-export default defineComponent({
-	data() {
-		return {
-			darkMode: document.documentElement.classList.contains('dark'),
-		};
-	},
-	computed: {
-		icon(): string[] {
-			return ['far', this.$data.darkMode ? 'star-and-crescent' : 'sun'];
-		}
-	},
-	methods: {
-		toggleColourScheme() {
-			this.$data.darkMode = !this.$data.darkMode;
+function toggleColourScheme() {
+	darkMode = !darkMode;
 
-			window.localStorage.setItem('theme', (this as any).$data.darkMode ? 'dark' : 'light');
+	window.localStorage.setItem('theme', darkMode ? 'dark' : 'light');
 
-			document.documentElement.classList.toggle('dark', this.$data.darkMode);
-		}
-	},
-})
+	document.documentElement.classList.toggle('dark', darkMode);
+}
 </script>

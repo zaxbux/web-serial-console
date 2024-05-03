@@ -80,9 +80,8 @@
 		</Dialog>
 	</TransitionRoot>
 </template>
-
-<script lang="ts">
-import { ref, defineComponent } from "vue";
+<script setup lang="ts">
+import { ref } from "vue";
 import {
 	TransitionRoot,
 	TransitionChild,
@@ -93,38 +92,24 @@ import {
 import TerminalThemePicker from './TerminalThemePicker.vue';
 import Settings from '../settings';
 
-export default defineComponent({
-	components: {
-		TransitionRoot,
-		TransitionChild,
-		Dialog,
-		DialogOverlay,
-		DialogTitle,
-		TerminalThemePicker,
-	},
-	emits: ['close'],
-	methods: {
-		closeModal() {
-			this.isOpen = false;
+const $emit = defineEmits<{
+	(event: 'close'): void
+}>()
 
-			this.$emit('close');
-		},
-		openModal() {
-			this.isOpen = true;
-		},
-		resetSettings() {
-			if (confirm('Are you sure you want to reset all settings?')) {
-				Settings.reset();
-			}
-		}
-	},
-	setup() {
-		const isOpen = ref(false);
+const isOpen = ref(false);
 
-		return {
-			isOpen,
-		};
-	},
-});
+function closeModal() {
+	isOpen.value = false;
+
+	$emit('close');
+}
+function openModal() {
+	isOpen.value = true;
+}
+function resetSettings() {
+	if (confirm('Are you sure you want to reset all settings?')) {
+		Settings.reset();
+	}
+}
 </script>
 
