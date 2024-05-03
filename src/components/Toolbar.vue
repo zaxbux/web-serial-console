@@ -5,7 +5,7 @@
 				<label for="serial-port-selector" class="block">serial port</label>
 
 				<div class="flex">
-					<serial-port-selector id="serial-port-selector" class="form-control w-48 rounded-r-none min-h-full" :disabled="disableInputs" />
+					<serial-port-selector id="serial-port-selector" class="form-control w-48 rounded-r-none min-h-full" :disabled="disableInputs" @port-selected="serialPortSelected" />
 					<button class="btn border-l-0 rounded-l-none min-h-full" title="add port" @click="$emit('request-port')" :disabled="disableInputs"><font-awesome-icon :icon="['far', 'plus']" fixed-width /></button>
 				</div>
 			</div>
@@ -13,7 +13,7 @@
 			<div class="mt-auto">
 				<button class="btn"
 					:title="connected ? 'disconnect' : 'connect'" @click="$emit('connect')"
-					:disabled="connecting || disconnecting"
+					:disabled="connecting || disconnecting || !isPort"
 				>
 						<font-awesome-icon v-if="connected" :icon="['far', 'times-octagon']" fixed-width />
 						<font-awesome-icon v-else :icon="['far', 'plug']" fixed-width />
@@ -109,6 +109,8 @@ import ColourSchemeToggle from './ColourSchemeToggle.vue';
 import HelpIcon from './HelpIcon.vue';
 import SettingsModal from './SettingsModal.vue';
 
+import Settings from '../settings';
+
 export default defineComponent({
 	components: {
 		SerialPortSelector,
@@ -139,6 +141,16 @@ export default defineComponent({
 	computed: {
 		disableInputs(): boolean {
 			return this.connecting || this.connected || this.disconnecting;
+		}
+	},
+	methods: {
+		serialPortSelected(value) {
+			this.$data.isPort = value;
+		}
+	},
+	data() {
+		return {
+			isPort: false,
 		}
 	},
 })
