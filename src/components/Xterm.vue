@@ -22,7 +22,7 @@ export default defineComponent({
 
 		return { platform };
 	},
-	mounted(): Promise<void> {
+	mounted() {
 		this.platform = new TerminalPlatform({
 			cursorStyle: this.$settings.cursorStyle,
 			bellSound: Settings.bellSound,
