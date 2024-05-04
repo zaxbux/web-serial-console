@@ -1,14 +1,12 @@
 <template>
-  <v-btn title="toggle colour scheme" :icon="darkMode ? 'mdi-brightness-4' : 'mdi-brightness-6'" @click="toggleColourScheme"/>
+  <v-btn title="toggle colour scheme" :icon="theme.global.current.value.dark ? 'mdi-brightness-4' : 'mdi-brightness-6'" @click="toggle"/>
 </template>
 <script setup lang="ts">
-let darkMode = document.documentElement.classList.contains('dark')
+import { useTheme } from 'vuetify';
 
-function toggleColourScheme() {
-	darkMode = !darkMode;
+const theme = useTheme()
 
-	window.localStorage.setItem('theme', darkMode ? 'dark' : 'light');
-
-	document.documentElement.classList.toggle('dark', darkMode);
+function toggle() {
+	theme.global.name.value = theme.global.current.value.dark ? 'light' : 'dark'
 }
 </script>

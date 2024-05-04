@@ -1,154 +1,224 @@
 <template>
-	<v-main  height="100%" max-height="100%">
-    <Toolbar @connect="toggleConsole(connected)" @clear="resetTerminal()" @download="downloadContents()" @request-port="requestPort()" @change="setTerminalOptions()" />
-    <Xterm ref="xterm" @ready="onXtermReady" @title-change="onXtermTitle" @line-feed="onXtermLineFeed" />
-    <v-footer>
-    <v-row>
-      <v-col cols="auto">
-        <v-icon v-if="consoleState.connected" icon="mdi-play-circle" color="green"/>
-        <v-icon v-if="!consoleState.connected" icon="mdi-stop-circle" color="red"/>
-      </v-col>
-      <v-divider vertical/>
-      <v-col cols="auto">
-        {{ statusText }}
-      </v-col>
-      <v-spacer/>
-      <v-col cols="auto">
-        {{ consoleState.lines}} lines
-      </v-col>
-    </v-row>
-  </v-footer>
+  <Toolbar
+    @click:connect="() => toggleConsole(state.connected)"
+    @click:clear="resetTerminal"
+    @click:download="downloadContents"
+  />
+  <v-main height="calc(100dvh - var(--v-layout-top))" max-height="100%">
+    <div ref="xterm" class="xterm-container xterm-full" />
   </v-main>
-
-
+  <v-footer class="gc-3">
+    <v-icon
+      :icon="state.connected ? 'mdi-play-circle' : 'mdi-stop-circle'"
+      size="small"
+      :color="state.connected ? 'green' : 'red'"
+    />
+    <v-divider vertical />
+    <span>{{ statusText }}</span>
+    <v-spacer />
+    <span>{{ state.lines }} lines</span>
+  </v-footer>
 </template>
 <script setup lang="ts">
-import { ref, computed, onMounted, type ComponentPublicInstance } from 'vue';
+import { ref, computed, onMounted, nextTick } from "vue";
+import "@xterm/xterm/css/xterm.css";
+import "source-code-pro/source-code-pro.css";
+import Toolbar from "./Toolbar.vue";
 
-import Toolbar from './Toolbar.vue';
-import Xterm from './Xterm.vue';
+import Log from "@/utils/log";
+import SerialManager, {
+  getPortMetadata,
+  SerialPortMetadata,
+} from "@/utils/serial-port-manager";
+import { SerialPortConsole } from "@/utils/serial-port-console";
+import { TerminalPlatform } from "@/utils/xterm-extended";
+import { fauxLink } from "@/utils/fauxLink";
+import { useConsoleStore } from "@/stores/console";
+import { useSettingsStore } from "@/stores/settings";
+import { useDebounceFn } from '@vueuse/core'
 
-import Log from '@/utils/log';
-import SerialManager, { getPortMetadata, SerialPortMetadata } from '@/utils/serial-port-manager';
-import { SerialPortConsole } from '@/utils/serial-port-console';
-import { TerminalPlatform } from '@/utils/xterm-extended';
-import { fauxLink } from '@/utils/fauxLink';
-import { useConsoleStore } from '@/stores/console';
 
-const consoleState = useConsoleStore()
+const state = useConsoleStore();
+const settings = useSettingsStore();
 
-const log = new Log('console');
+const log = new Log("console");
 
-const xterm = ref<ComponentPublicInstance<typeof Xterm>>()
-const statusMessages = ref(['disconnected'])
+const xterm = ref<HTMLDivElement>();
+const platform = new TerminalPlatform({
+  cursorStyle: settings.cursorStyle,
+  bellSound: settings.bellSound,
+  //bellStyle: settings.bellStyle,
+  fontFamily: settings.fontFamily,
+  scrollback: settings.scrollback,
+  theme: settings.getTheme(),
+  allowProposedApi: true,
+});
 
-const statusText = computed(() => statusMessages.value.slice(-1).pop())
+const statusText = computed(() => state.messages.slice(-1).pop());
 
-let platform
-let serialConsole
+const serialConsole = new SerialPortConsole(platform.terminal, {
+  onConnecting: (options) => {
+    log.info("connecting", options);
+    state.connecting = true;
 
-function onXtermReady(_platform: TerminalPlatform) {
-	log.info('terminal ready');
+    platform.terminal.reset();
+  },
+  onConnected: (port) => {
+    log.info("connected");
+    state.connecting = false;
+    state.connected = true;
 
-	platform = _platform;
+    state.messages.push(`connected to ${getPortMetadata(port).label}`);
+  },
+  onDisconnecting: (data) => {
+    log.info("disconnecting", data);
+    state.disconnecting = true;
+  },
+  onDisconnected: (data) => {
+    log.info("disconnected", data);
+    state.disconnecting = false;
+    state.connected = false;
 
-	serialConsole = new SerialPortConsole(platform.terminal, {
-		onConnecting: (options) => {
-			log.info('connecting', options);
-			consoleState.connecting = true;
+    state.messages.push(`disconnected`);
+  },
+  onConnectError: (error) => {
+    log.error("connect error", error);
+  },
+  onDisconnectError: (error) => {
+    log.error("disconnect error", error);
+  },
+});
 
-			platform.terminal.reset();
-		},
-		onConnected: (port) => {
-			log.info('connected');
-			consoleState.connecting = false;
-			consoleState.connected = true;
+const onSettingsChange = useDebounceFn((mutation, state) => {
+  platform.terminal.options.theme = settings.getTheme();
+  platform.terminal.options.cursorStyle = state.cursorStyle;
+  platform.terminal.options.bellStyle = state.bellStyle;
+  platform.terminal.options.cursorBlink = state.cursorBlink;
 
-			statusMessages.value.push(`connected to ${getPortMetadata(port).label}`);
-		},
-		onDisconnecting: (data) => {
-			log.info('disconnecting', data);
-			consoleState.disconnecting = true;
-		},
-		onDisconnected: (data) => {
-			log.info('disconnected', data);
-			consoleState.disconnecting = false;
-			consoleState.connected = false;
+  serialConsole.echo = settings.localEcho;
+  serialConsole.flushOnEnter = settings.flushOnEnter;
 
-			statusMessages.value.push(`disconnected`);
-		},
-		onConnectError: (error) => {
-			log.error('connect error', error);
-		},
-		onDisconnectError: (error) => {
-			log.error('disconnect error', error);
-		}
-	});
-}
-function onXtermTitle(title: string) {
-	document.title = `${title}`;
-}
-function onXtermLineFeed() {
-	consoleState.lines++;
-}
-function setTerminalOptions() {
-	platform.terminal.setOption('theme', consoleState.themes.default);
-	platform.terminal.setOption('cursorStyle', consoleState.cursorStyle);
-	platform.terminal.setOption('bellStyle', consoleState.bellStyle);
-	platform.terminal.setOption('cursorBlink', consoleState.cursorBlink);
+  if (state.ports.length === 0) {
+    // no ports available, force value
+    state.portIndex = null;
+  }
+}, 500);
 
-	xterm.value?.focus();
-}
+settings.$subscribe(onSettingsChange);
+
 async function toggleConsole(connected: boolean): Promise<void> {
-	const port = SerialManager.getPort(consoleState.portIndex);
+  const port = SerialManager.getPort(settings.portIndex);
 
-	if (!port) {
-		alert('please select a port');
-		return;
-	}
+  if (!port) {
+    alert("please select a port");
+    return;
+  }
 
-	if (!serialConsole) {
-		return;
-	}
+  if (connected) {
+    serialConsole.disconnect();
+  } else {
+    //serialConsole.echo = settings.localEcho;
+    //serialConsole.flushOnEnter = settings.flushOnEnter;
 
-	if (connected) {
-		serialConsole.disconnect();
-	} else {
-		serialConsole.echo = consoleState.echo;
-		serialConsole.flushOnEnter = consoleState.flushOnEnter;
-
-		serialConsole.connect(port, {
-			baudRate: consoleState.baudRate,
-			dataBits: consoleState.dataBits,
-			parity: consoleState.parity,
-			stopBits: consoleState.stopBits,
-			flowControl: consoleState.flowControl,
-		});
-	}
+    serialConsole.connect(port, {
+      baudRate: settings.baudRate,
+      dataBits: settings.dataBits,
+      parity: settings.parity,
+      stopBits: settings.stopBits,
+      flowControl: settings.flowControl,
+    });
+  }
 }
 function downloadContents(): void {
-	fauxLink(platform.serializeAddon.serialize()).click();
+  fauxLink(platform.serializeAddon.serialize()).click();
 }
 function resetTerminal(): void {
-	platform.terminal.reset();
-	consoleState.lines = 0;
-}
-async function requestPort(): Promise<void> {
-	try {
-		await SerialManager.requestPort();
-	} catch (error) {
-		this.statusMessages.push(error.message);
-	}
+  platform.terminal.reset();
+  state.lines = 0;
 }
 
+onMounted(async () => {
+  await settings.updatePorts();
 
-onMounted(() => {
-	SerialManager.on('connect', (data: { port: SerialPort, metadata: SerialPortMetadata}) => {
-		statusMessages.value.push(`${data.metadata.label} connected`);
-	});
+  SerialManager.on(
+    "connect",
+    (data: { port: SerialPort; metadata: SerialPortMetadata }) => {
+      state.messages.push(`${data.metadata.label} connected`);
+    }
+  );
 
-	SerialManager.on('disconnect', (data: { port: SerialPort, metadata: SerialPortMetadata}) => {
-		statusMessages.value.push(`${data.metadata.label} disconnected`);
-	});
-})
+  SerialManager.on(
+    "disconnect",
+    (data: { port: SerialPort; metadata: SerialPortMetadata }) => {
+      state.messages.push(`${data.metadata.label} disconnected`);
+    }
+  );
+
+  platform.terminal.onTitleChange((title: string) => {
+    document.title = `${title}`;
+  });
+  platform.terminal.onLineFeed(() => {
+    state.lines++;
+  });
+
+  platform.terminal.open(xterm.value);
+  nextTick(() => {
+    setInterval(() => platform.fitAddon.fit(), 100);
+  })
+
+  platform.writeTestPattern();
+
+  window.addEventListener("resize", () => {
+    platform.fitAddon.fit();
+  });
+
+  log.info("terminal ready");
+});
+
+const fontFamily = computed(() => settings.fontFamily);
 </script>
+
+<style scoped lang="scss">
+.xterm-container {
+  font-family: v-bind(fontFamily);
+  width: 100%;
+  height: 100%;
+}
+
+.xterm-full:deep() {
+  .terminal {
+    height: 100%;
+    display: flex;
+    padding: 0.5rem;
+
+    .xterm-viewport {
+      //scrollbar-width: thin;          // "auto" or "thin"
+      scrollbar-color: transparent; // scroll thumb and track
+
+      &::-webkit-scrollbar {
+        width: 1rem; // width of the entire scrollbar
+      }
+
+      &::-webkit-scrollbar-track {
+        @apply transition-colors;
+        background-color: rgba(0, 0, 0, 0.1); // color of the tracking area
+        border-left: 1px solid rgba(255, 255, 255, 0.3);
+      }
+
+      &::-webkit-scrollbar-thumb {
+        background-color: rgba(255, 255, 255, 0.5); // color of the scroll thumb
+        //border-radius: 20px;       // roundness of the scroll thumb
+        //border: 3px solid orange;  // creates padding around scroll thumb
+
+        &:hover {
+          background-color: rgba(255, 255, 255, 0.7);
+        }
+      }
+    }
+
+    .xterm-screen {
+      //margin-top: auto;
+    }
+  }
+}
+</style>

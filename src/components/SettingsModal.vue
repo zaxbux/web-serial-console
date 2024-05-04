@@ -7,46 +7,30 @@
       <v-card title="Settings">
         <v-card-text>
           <v-row>
-            <v-col><v-select v-model="consoleState.cursorStyle" label="Cursor Style" :items="cursorStyleItems"/></v-col>
-            <v-col cols="2"><v-checkbox label="Blink" v-model="consoleState.cursorBlink"/></v-col>
+            <v-col><v-select v-model="settings.cursorStyle" label="Cursor Style" :items="cursorStyleItems"/></v-col>
+            <v-col cols="2"><v-checkbox label="Blink" v-model="settings.cursorBlink"/></v-col>
           </v-row>
 
-          <v-text-field type="number" label="Scrollback" min="0" max="10000" v-model="consoleState.scrollback"/>
+          <v-text-field type="number" label="Scrollback" min="0" max="10000" v-model="settings.scrollback"/>
 
           <v-row>
-            <!-- <v-col><v-file-input label="Bell Style" accept="audio/*" v-model="consoleState.bellStyle"/></v-col> -->
-            <v-col cols="2"><v-checkbox label="Bell" v-model="consoleState.bell"/></v-col>
+            <!-- <v-col><v-file-input label="Bell Style" accept="audio/*" v-model="settings.bellStyle"/></v-col> -->
+            <v-col cols="2"><v-checkbox label="Bell" v-model="settings.bell"/></v-col>
           </v-row>
 
-          <v-select label="Font" v-model="consoleState.fontFamily" :items="['Source Code Pro']"/>
+          <v-select label="Font" v-model="settings.fontFamily" :items="['Source Code Pro']"/>
 
-          <v-card subtitle="Theme">
-            <v-card-item>
-              <v-row>
-                <v-col v-for="(label, color) in colors" :key="color" cols="4">
-                  <v-row>
-                    <v-col cols="4">{{label}}</v-col>
-                    <v-col >
-                      <color-picker v-model="theme[color]"/>
-                    </v-col>
-                  </v-row>
+          <v-select label="Theme" v-model="settings.theme" :items="[{value: 'default', title: 'Default'}]"/>
+          <v-row no-gutters class="gr-2">
+            <v-col v-for="(label, color) in colors" :key="color" cols="6">
+              <v-row no-gutters>
+                <v-col cols="4">{{label}}</v-col>
+                <v-col >
+                  <color-picker v-model="theme[color]"/>
                 </v-col>
               </v-row>
-
-              <v-row>
-                <v-col v-for="(label, color) in ansi" :key="color" cols="6">
-                  <v-row>
-                    <v-col cols="4">
-                      {{label}}
-                    </v-col>
-                    <v-col>
-                      <color-picker v-model="theme[color]"/>
-                    </v-col>
-                  </v-row>
-                </v-col>
-              </v-row>
-            </v-card-item>
-          </v-card>
+            </v-col>
+          </v-row>
         </v-card-text>
         <v-card-actions>
           <v-btn @click="resetSettings">Reset</v-btn>
@@ -58,15 +42,11 @@
   </v-dialog>
 </template>
 <script setup lang="ts">
-import { computed, ref, watch } from "vue";
+import { computed, ref } from "vue";
 import ColorPicker from './ColorPicker.vue';
-import { useConsoleStore } from '../stores/console';
+import { useSettingsStore } from '../stores/settings';
 
-const $emit = defineEmits<{
-	(event: 'close'): void
-}>()
-
-const consoleState = useConsoleStore()
+const settings = useSettingsStore()
 
 const dialog = ref(false);
 
@@ -77,11 +57,12 @@ const cursorStyleItems = [
 ];
 
 const colors = {
-	selection:     'selection',
+  selectionForeground:     'selection foreground',
+	selectionBackground:     'selection background',
+  //selectionInactiveBackground: 'selection inactive',
 	cursor:        'cursor',
 	cursorAccent:  'cursor accent',
-};
-const ansi = {
+
   background:    'background',
 	foreground:    'foreground',
 	black:         'black',          // 0
@@ -103,19 +84,13 @@ const ansi = {
 };
 
 const theme = computed({
-  get: () => consoleState.themes[consoleState.theme],
-  set: (value) => consoleState.themes[consoleState.theme] = value
-})
-
-watch(dialog, (dialog) => {
-  if (!dialog) {
-    $emit('close');
-  }
+  get: () => settings.themes[settings.theme],
+  set: (value) => settings.themes[settings.theme] = value
 })
 
 function resetSettings() {
 	if (confirm('Are you sure you want to reset all settings?')) {
-		consoleState.reset();
+		settings.$reset();
 	}
 }
 </script>

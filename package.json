@@ -31,6 +31,7 @@
     "@types/w3c-web-serial": "^1.0.6",
     "@vitejs/plugin-vue": "^5.0.4",
     "@vue/eslint-config-typescript": "^13.0.0",
+    "@vueuse/core": "^10.9.0",
     "@xterm/addon-fit": "^0.10.0",
     "@xterm/addon-search": "^0.15.0",
     "@xterm/addon-serialize": "^0.13.0",

@@ -32,6 +32,6 @@ onMounted(() => {
 <style>
 html, body {
   height: 100%;
-  /* overflow-y: hidden; */
+  overflow-y: hidden;
 }
 </style>
