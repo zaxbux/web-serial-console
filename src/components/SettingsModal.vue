@@ -20,11 +20,11 @@
 
           <v-select label="Font" v-model="settings.fontFamily" :items="['Source Code Pro']"/>
 
-          <v-select label="Theme" v-model="settings.theme" :items="[{value: 'default', title: 'Default'}]"/>
+          <v-select label="Theme" v-model="settings.theme" :items="[{value: 'default', title: 'Dark'}, { value: 'light', title: 'Light'}]"/>
           <v-row no-gutters class="gr-2">
             <v-col v-for="(label, color) in colors" :key="color" cols="6">
               <v-row no-gutters>
-                <v-col cols="4">{{label}}</v-col>
+                <v-col cols="6">{{label}}</v-col>
                 <v-col >
                   <color-picker v-model="theme[color]"/>
                 </v-col>
@@ -84,12 +84,13 @@ const colors = {
 };
 
 const theme = computed({
-  get: () => settings.themes[settings.theme],
+  get: () => settings.getTheme(),
   set: (value) => settings.themes[settings.theme] = value
 })
 
 function resetSettings() {
 	if (confirm('Are you sure you want to reset all settings?')) {
+    window.localStorage.clear();
 		settings.$reset();
 	}
 }
