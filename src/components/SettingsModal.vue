@@ -6,7 +6,8 @@
     <template #default>
       <v-card title="Settings">
         <v-card-text>
-          <v-row>
+          <v-defaults-provider :defaults="{ VSelect: { density: 'compact'}, VTextField: { density: 'compact'}, VCheckbox: { density: 'compact'}}">
+            <v-row>
             <v-col><v-select v-model="settings.cursorStyle" label="Cursor Style" :items="cursorStyleItems"/></v-col>
             <v-col cols="2"><v-checkbox label="Blink" v-model="settings.cursorBlink"/></v-col>
           </v-row>
@@ -31,6 +32,7 @@
               </v-row>
             </v-col>
           </v-row>
+        </v-defaults-provider>
         </v-card-text>
         <v-card-actions>
           <v-btn @click="resetSettings">Reset</v-btn>

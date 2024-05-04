@@ -7,6 +7,7 @@
   <v-main height="calc(100dvh - var(--v-layout-top))" max-height="100%">
     <div ref="xterm" class="xterm-container xterm-full" />
   </v-main>
+  <v-divider/>
   <v-footer class="gc-3">
     <v-icon
       :icon="state.connected ? 'mdi-play-circle' : 'mdi-stop-circle'"
