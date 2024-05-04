@@ -1,8 +1,10 @@
 <template>
-	<span :title="text" class="opacity-60"><font-awesome-icon :icon="['far', 'question-circle']" size="sm" fixed-width /></span>
+  <v-tooltip>
+    <template #activator="{ props }">
+      <v-icon v-bind="props" icon="mdi-help-circle"/>
+    </template>
+  </v-tooltip>
 </template>
 <script setup lang="ts">
-defineProps<{
-	text: string
-}>()
+  //
 </script>

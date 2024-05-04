@@ -15,32 +15,46 @@
   "scripts": {
     "dev": "vite",
     "build": "vue-tsc --noEmit && vite build",
-    "serve": "vite preview"
-  },
-  "devDependencies": {
-    "@types/w3c-web-serial": "^1.0.6",
-    "@vitejs/plugin-vue": "^5.0.4",
-    "autoprefixer": "^10.4.19",
-    "postcss": "^8.4.38",
-    "sass": "^1.76.0",
-    "tailwindcss": "^3.4.3",
-    "typescript": "^5.4.5",
-    "vite": "^5.2.11",
-    "vue-tsc": "^2.0.16"
+    "preview": "vite preview",
+    "lint": "eslint . --fix --ignore-path .gitignore"
   },
   "dependencies": {
-    "@fortawesome/fontawesome-svg-core": "^6.5.2",
-    "@fortawesome/free-brands-svg-icons": "^6.5.2",
-    "@fortawesome/pro-regular-svg-icons": "^6.5.2",
-    "@fortawesome/vue-fontawesome": "^3.0.6",
-    "@headlessui/vue": "^1.7.21",
+    "@mdi/font": "6.2.95",
+    "roboto-fontface": "*",
     "source-code-pro": "^2.38.0",
     "vue": "^3.4.26",
-    "@xterm/xterm": "^5.5.0",
+    "vuetify": "^3.6.3"
+  },
+  "devDependencies": {
+    "@babel/types": "^7.24.0",
+    "@types/node": "^20.11.25",
+    "@types/w3c-web-serial": "^1.0.6",
+    "@vitejs/plugin-vue": "^5.0.4",
+    "@vue/eslint-config-typescript": "^13.0.0",
     "@xterm/addon-fit": "^0.10.0",
     "@xterm/addon-search": "^0.15.0",
     "@xterm/addon-serialize": "^0.13.0",
     "@xterm/addon-unicode11": "^0.8.0",
-    "@xterm/addon-web-links": "^0.11.0"
+    "@xterm/addon-web-links": "^0.11.0",
+    "@xterm/xterm": "^5.5.0",
+    "eslint": "^8.57.0",
+    "eslint-config-standard": "^17.1.0",
+    "eslint-plugin-import": "^2.29.1",
+    "eslint-plugin-n": "^16.6.2",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^6.1.1",
+    "eslint-plugin-vue": "^9.22.0",
+    "pinia": "^2.1.7",
+    "sass": "^1.71.1",
+    "typescript": "^5.4.2",
+    "unplugin-auto-import": "^0.17.5",
+    "unplugin-fonts": "^1.1.1",
+    "unplugin-vue-components": "^0.26.0",
+    "unplugin-vue-router": "^0.8.4",
+    "vite": "^5.1.5",
+    "vite-plugin-vue-layouts": "^0.11.0",
+    "vite-plugin-vuetify": "^2.0.3",
+    "vue-router": "^4.3.0",
+    "vue-tsc": "^2.0.6"
   }
 }

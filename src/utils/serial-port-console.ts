@@ -18,7 +18,7 @@ export class SerialPortConsole {
 	private _callbacks: SerialPortConsoleCallbacks;
 	private _echo: boolean;
 	private _flushOnEnter: boolean;
-	
+
 	constructor(terminal: Terminal, callbacks: SerialPortConsoleCallbacks) {
 		this._terminal = terminal;
 		this._callbacks = callbacks;
@@ -74,7 +74,11 @@ export class SerialPortConsole {
 
 		this._callbacks.onConnecting(options);
 
-		await this._port.open(options);
+		try {
+      await this._port.open(options);
+    } catch (err) {
+      this._callbacks.onConnectError(err)
+    }
 
 		this._callbacks.onConnected(port);
 
@@ -104,7 +108,7 @@ export class SerialPortConsole {
 
 				await this._port.close();
 			} catch (error) {
-				this._callbacks.onConnectError(error);
+				this._callbacks.onDisconnectError(error);
 			}
 
 			this._callbacks.onDisconnected({ early: true });

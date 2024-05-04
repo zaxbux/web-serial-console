@@ -1,19 +1,21 @@
 <template>
-	<div ref="xterm" class="xterm-container xterm-full" />
+	<div ref="xterm" class="xterm-container xterm-full h-100 w-100" />
 </template>
 <script setup lang="ts">
 import '@xterm/xterm/css/xterm.css';
 import 'source-code-pro/source-code-pro.css';
-import { provide, ref, onMounted } from 'vue';
-import Settings from '../settings';
-import { TerminalPlatform } from '../xterm-extended';
+import { ref, onMounted, computed } from 'vue';
+import { TerminalPlatform } from '@/utils/xterm-extended';
 import { ITerminalOptions } from '@xterm/xterm';
+import { useConsoleStore } from '@/stores/console';
 
 const $emit = defineEmits<{
 	(event: 'ready', payload: TerminalPlatform): void
 	(event: 'title-change', payload: string): void
 	(event: 'line-feed'): void
 }>()
+
+const consoleState = useConsoleStore()
 
 const xterm = ref<HTMLDivElement>()
 const platform = ref<TerminalPlatform>();
@@ -30,12 +32,12 @@ function paste(data: string) {
 
 onMounted(() => {
 	platform.value = new TerminalPlatform({
-		cursorStyle: Settings.cursorStyle,
-		bellSound: Settings.bellSound,
-		bellStyle: (Settings.bellStyle as ITerminalOptions['bellStyle']),
-		fontFamily: Settings.fontFamily,
-		scrollback: (Settings.scrollback as number),
-		theme: Settings.themes.default,
+		cursorStyle: consoleState.cursorStyle,
+		bellSound: consoleState.bellSound,
+		bellStyle: (consoleState.bellStyle as ITerminalOptions['bellStyle']),
+		fontFamily: consoleState.fontFamily,
+		scrollback: consoleState.scrollback,
+		theme: consoleState.themes.default,
 		allowProposedApi: true,
 	});
 
@@ -52,11 +54,50 @@ onMounted(() => {
 
 	$emit('ready', platform.value);
 })
+
+const fontFamily = computed(() => consoleState.fontFamily)
 </script>
-<style scoped>
+<style scoped lang="scss">
 .xterm-container {
-	@apply w-full;
-	@apply h-full;
-	@apply font-mono;
+  font-family: v-bind(fontFamily);
 }
+
+.xterm-full {
+		.terminal {
+			@apply h-full;
+			@apply flex;
+			@apply p-2;
+
+			.xterm-viewport {
+				//scrollbar-width: thin;          // "auto" or "thin"
+				scrollbar-color: transparent;   // scroll thumb and track
+
+				&::-webkit-scrollbar {
+					width: 1rem;               // width of the entire scrollbar
+				}
+
+				&::-webkit-scrollbar-track {
+					@apply transition-colors;
+					background-color: rgba(0, 0, 0, 0.1);        // color of the tracking area
+					border-left: 1px solid rgba(255, 255, 255, 0.3);
+
+
+				}
+
+				&::-webkit-scrollbar-thumb {
+					background-color: rgba(255, 255, 255, 0.5);    // color of the scroll thumb
+					//border-radius: 20px;       // roundness of the scroll thumb
+					//border: 3px solid orange;  // creates padding around scroll thumb
+
+					&:hover {
+						background-color: rgba(255, 255, 255, 0.7);
+					}
+				}
+			}
+
+			.xterm-screen {
+				@apply mt-auto;
+			}
+		}
+	}
 </style>

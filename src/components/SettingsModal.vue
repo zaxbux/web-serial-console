@@ -1,114 +1,121 @@
 <template>
-	<button class="btn" title="settings" type="button" @click="openModal"><font-awesome-icon :icon="['far', 'cog']" fixed-width /></button>
+  <v-dialog v-model="dialog">
+    <template #activator="{ props }">
+      <v-btn v-bind="props" title="Settings" icon="mdi-cog" />
+    </template>
+    <template #default>
+      <v-card title="Settings">
+        <v-card-text>
+          <v-row>
+            <v-col><v-select v-model="consoleState.cursorStyle" label="Cursor Style" :items="cursorStyleItems"/></v-col>
+            <v-col cols="2"><v-checkbox label="Blink" v-model="consoleState.cursorBlink"/></v-col>
+          </v-row>
 
-	<TransitionRoot appear :show="isOpen" as="template">
-		<Dialog as="div" static class="modal" :open="isOpen" @close="closeModal">
-			<div class="modal-wrapper">
-				<TransitionChild
-					as="template"
-					enter="duration-300 ease-out"
-					enter-from="opacity-0"
-					enter-to="opacity-100"
-					leave="duration-200 ease-in"
-					leave-from="opacity-100"
-					leave-to="opacity-0"
-				><DialogOverlay class="overlay" /></TransitionChild>
+          <v-text-field type="number" label="Scrollback" min="0" max="10000" v-model="consoleState.scrollback"/>
 
-				<!-- This element is to trick the browser into centering the modal contents. -->
-				<span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+          <v-row>
+            <!-- <v-col><v-file-input label="Bell Style" accept="audio/*" v-model="consoleState.bellStyle"/></v-col> -->
+            <v-col cols="2"><v-checkbox label="Bell" v-model="consoleState.bell"/></v-col>
+          </v-row>
 
-				<TransitionChild
-					as="template"
-					enter="duration-300 ease-out"
-					enter-from="opacity-0 scale-95"
-					enter-to="opacity-100 scale-100"
-					leave="duration-200 ease-in"
-					leave-from="opacity-100 scale-100"
-					leave-to="opacity-0 scale-95"
-				>
-				<div class="modal-contents">
-					<div class="body">
-							<div class="mt-3 text-center sm:mt-0 sm:text-left">
-								<DialogTitle as="h3" class="title">Settings</DialogTitle>
-								<div class="mt-2 space-y-4">
-									<div class="flex gap-4">
-										<div class="form-group w-full">
-											<label for="terminal-cursor-style">cursor style</label>
-											<div class="flex gap-2 items-center">
-												<select id="terminal-cursor-style" class="form-control w-full" v-model="$settings.cursorStyle">
-													<option value="block">block</option>
-													<option value="underline">underline</option>
-													<option value="bar">bar</option>
-												</select>
-												<label for="terminal-cursor-blink" class="flex-none"><input type="checkbox" id="terminal-cursor-blink" class="form-control" v-model="$settings.cursorBlink"> blink</label>
-											</div>
-										</div>
-									</div>
+          <v-select label="Font" v-model="consoleState.fontFamily" :items="['Source Code Pro']"/>
 
-									<div class="form-group">
-										<label for="terminal-scrollback" class="block">scrollback</label>
-										<input type="number" id="terminal-scrollback" class="form-control w-full" min="0" max="10000" v-model="$settings.scrollback">
-									</div>
+          <v-card subtitle="Theme">
+            <v-card-item>
+              <v-row>
+                <v-col v-for="(label, color) in colors" :key="color" cols="4">
+                  <v-row>
+                    <v-col cols="4">{{label}}</v-col>
+                    <v-col >
+                      <color-picker v-model="theme[color]"/>
+                    </v-col>
+                  </v-row>
+                </v-col>
+              </v-row>
 
-									<div class="form-group">
-										<label for="terminal-bell-style" class="block">bell</label>
-										<input type="file" id="" accept="audio/*">
-										<input type="checkbox" id="terminal-bell-style" class="form-control" v-model="$settings.bell">
-									</div>
-
-									<div class="form-group">
-										<label for="terminal-cursor-style" class="block">font</label>
-										<select id="terminal-cursor-style" class="form-control w-full" v-model="$settings.fontFamily">
-											<option value="Source Code Pro" class="font-mono">Source Code Pro</option>
-										</select>
-									</div>
-
-									theme
-									
-									<TerminalThemePicker />
-
-								</div>
-						</div>
-					</div>
-					<div class="footer">
-						<button class="btn" @click="closeModal">Close</button>
-						<button class="btn sm:mr-auto" @click="resetSettings">Reset</button>
-					</div>
-				</div>
-				</TransitionChild>
-			</div>
-		</Dialog>
-	</TransitionRoot>
+              <v-row>
+                <v-col v-for="(label, color) in ansi" :key="color" cols="6">
+                  <v-row>
+                    <v-col cols="4">
+                      {{label}}
+                    </v-col>
+                    <v-col>
+                      <color-picker v-model="theme[color]"/>
+                    </v-col>
+                  </v-row>
+                </v-col>
+              </v-row>
+            </v-card-item>
+          </v-card>
+        </v-card-text>
+        <v-card-actions>
+          <v-btn @click="resetSettings">Reset</v-btn>
+          <v-spacer/>
+          <v-btn @click="() => dialog = false">Close</v-btn>
+        </v-card-actions>
+      </v-card>
+    </template>
+  </v-dialog>
 </template>
 <script setup lang="ts">
-import { ref } from "vue";
-import {
-	TransitionRoot,
-	TransitionChild,
-	Dialog,
-	DialogOverlay,
-	DialogTitle,
-} from "@headlessui/vue";
-import TerminalThemePicker from './TerminalThemePicker.vue';
-import Settings from '../settings';
+import { computed, ref, watch } from "vue";
+import ColorPicker from './ColorPicker.vue';
+import { useConsoleStore } from '../stores/console';
 
 const $emit = defineEmits<{
 	(event: 'close'): void
 }>()
 
-const isOpen = ref(false);
+const consoleState = useConsoleStore()
 
-function closeModal() {
-	isOpen.value = false;
+const dialog = ref(false);
 
-	$emit('close');
-}
-function openModal() {
-	isOpen.value = true;
-}
+const cursorStyleItems = [
+  { value: 'block', title: 'block' },
+  { value: 'underline', title: 'underline' },
+  { value: 'bar', title: 'bar' },
+];
+
+const colors = {
+	selection:     'selection',
+	cursor:        'cursor',
+	cursorAccent:  'cursor accent',
+};
+const ansi = {
+  background:    'background',
+	foreground:    'foreground',
+	black:         'black',          // 0
+	brightBlack:   'bright black',   // 8
+	red:           'red',            // 1
+	brightRed:     'bright red',     // 9
+	green:         'green',          // 2
+	brightGreen:   'bright green',   // 10
+	yellow:        'yellow',         // 3
+	brightYellow:  'bright yellow',  // 11
+	blue:          'blue',           // 4
+	brightBlue:    'bright blue',    // 12
+	magenta:       'magenta',        // 5
+	brightMagenta: 'bright magenta', // 13
+	cyan:          'cyan',           // 6
+	brightCyan:    'bright cyan',    // 14
+	white:         'white',          // 7
+	brightWhite:   'bright white',   // 15
+};
+
+const theme = computed({
+  get: () => consoleState.themes[consoleState.theme],
+  set: (value) => consoleState.themes[consoleState.theme] = value
+})
+
+watch(dialog, (dialog) => {
+  if (!dialog) {
+    $emit('close');
+  }
+})
+
 function resetSettings() {
 	if (confirm('Are you sure you want to reset all settings?')) {
-		Settings.reset();
+		consoleState.reset();
 	}
 }
 </script>

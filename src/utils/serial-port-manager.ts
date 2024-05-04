@@ -1,6 +1,6 @@
-import { Dispatcher } from './utils/dispatcher';
-import Log from './utils/log';
-import { niceName } from './utils/usb-devices';
+import { Dispatcher } from './dispatcher';
+import Log from './log';
+import { niceName } from './usb-devices';
 
 export type SerialPortMap = Map<SerialPort, SerialPortMetadata>;
 
@@ -30,7 +30,7 @@ export class SerialPortManager extends Dispatcher {
 
 			navigator.serial?.addEventListener('connect', (event: Event): void => {
 				log.info('@connect', event);
-		
+
 				const port = (event as SerialEvent).target;
 				const metadata = getPortMetadata(port);
 
@@ -38,14 +38,14 @@ export class SerialPortManager extends Dispatcher {
 					port,
 					metadata
 				});
-		
+
 				this._ports.set(port, metadata);
 				this.dispatch('update', { ports: this._ports });
 			});
 
 			navigator.serial?.addEventListener('disconnect', (event: Event): void => {
 				log.info('@disconnect', event);
-		
+
 				const port = (event as SerialEvent).target;
 				const metadata = getPortMetadata(port);
 
@@ -53,7 +53,7 @@ export class SerialPortManager extends Dispatcher {
 					port,
 					metadata
 				});
-		
+
 				this._ports.delete(port);
 				this.dispatch('update', { ports: this._ports });
 			});

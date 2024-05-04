@@ -1,14 +1,8 @@
 <template>
-	<button class="btn" title="toggle colour scheme" @click="toggleColourScheme">
-		<font-awesome-icon v-if="darkMode" :icon="['far', 'lightbulb-slash']" fixed-width />
-		<font-awesome-icon v-else :icon="['far', 'lightbulb-on']" fixed-width />
-	</button>
+  <v-btn title="toggle colour scheme" :icon="darkMode ? 'mdi-brightness-4' : 'mdi-brightness-6'" @click="toggleColourScheme"/>
 </template>
 <script setup lang="ts">
-import { computed } from 'vue'
-
 let darkMode = document.documentElement.classList.contains('dark')
-const icon = computed(() => (['far', darkMode ? 'star-and-crescent' : 'sun']))
 
 function toggleColourScheme() {
 	darkMode = !darkMode;

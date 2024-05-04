@@ -1,16 +1,21 @@
+/**
+ * .eslint.js
+ *
+ * ESLint configuration file.
+ */
+
 module.exports = {
-	"extends": [
-		"eslint:recommended",
-		"plugin:@typescript-eslint/eslint-recommended",
-		"plugin:@typescript-eslint/recommended",
+	root: true,
+	env: {
+	  node: true,
+	},
+	extends: [
+	  'plugin:vue/vue3-essential',
+	  'eslint:recommended',
+	  '@vue/eslint-config-typescript',
 	],
-	"rules": {
-		//"@typescript-eslint/no-explicit-any": "off",
+	rules: {
+	  'vue/multi-word-component-names': 'off',
 	},
-	"env": {
-		"browser": true,
-		"es6": true
-	},
-	"parser": "@typescript-eslint/parser",
-	"plugins": ["@typescript-eslint"],
-}
+  }
+  

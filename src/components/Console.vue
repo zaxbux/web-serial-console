@@ -1,19 +1,26 @@
 <template>
-	<Toolbar :connected="connected" :connecting="connecting" :disconnecting="disconnecting" @connect="toggleConsole(connected)" @clear="resetTerminal()" @download="downloadContents()" @request-port="requestPort()" @change="setTerminalOptions()" @fullscreen="requestFullscreen()" />
+	<v-main  height="100%" max-height="100%">
+    <Toolbar @connect="toggleConsole(connected)" @clear="resetTerminal()" @download="downloadContents()" @request-port="requestPort()" @change="setTerminalOptions()" />
+    <Xterm ref="xterm" @ready="onXtermReady" @title-change="onXtermTitle" @line-feed="onXtermLineFeed" />
+    <v-footer>
+    <v-row>
+      <v-col cols="auto">
+        <v-icon v-if="consoleState.connected" icon="mdi-play-circle" color="green"/>
+        <v-icon v-if="!consoleState.connected" icon="mdi-stop-circle" color="red"/>
+      </v-col>
+      <v-divider vertical/>
+      <v-col cols="auto">
+        {{ statusText }}
+      </v-col>
+      <v-spacer/>
+      <v-col cols="auto">
+        {{ consoleState.lines}} lines
+      </v-col>
+    </v-row>
+  </v-footer>
+  </v-main>
 
-	<Xterm ref="xterm" @ready="onXtermReady" @title-change="onXtermTitle" @line-feed="onXtermLineFeed" />
 
-	<div class="px-2 py-1 bg-gray-600 text-white dark:bg-gray-300 dark:text-black flex gap-2">
-		<div>
-			<font-awesome-icon v-if="connected" :icon="['far', 'play-circle']" fixed-width class="text-green-500" /><font-awesome-icon v-else :icon="['far', 'stop-circle']" fixed-width class="text-red-500" />
-		</div>
-
-		<div class="divider-v my-1 opacity-50"></div>
-
-		<div>{{ statusText }}</div>
-		
-		<div class="ml-auto">{{ lines }} lines</div>
-	</div>
 </template>
 <script setup lang="ts">
 import { ref, computed, onMounted, type ComponentPublicInstance } from 'vue';
@@ -21,55 +28,52 @@ import { ref, computed, onMounted, type ComponentPublicInstance } from 'vue';
 import Toolbar from './Toolbar.vue';
 import Xterm from './Xterm.vue';
 
-import Settings from '../settings';
-import Log from '../utils/log';
-import SerialManager, { getPortMetadata, SerialPortMetadata } from '../serial-port-manager';
-import { SerialPortConsole } from '../serial-port-console';
-import { TerminalPlatform } from '../xterm-extended';
-import { fauxLink } from '../utils/fauxLink';
+import Log from '@/utils/log';
+import SerialManager, { getPortMetadata, SerialPortMetadata } from '@/utils/serial-port-manager';
+import { SerialPortConsole } from '@/utils/serial-port-console';
+import { TerminalPlatform } from '@/utils/xterm-extended';
+import { fauxLink } from '@/utils/fauxLink';
+import { useConsoleStore } from '@/stores/console';
+
+const consoleState = useConsoleStore()
 
 const log = new Log('console');
 
 const xterm = ref<ComponentPublicInstance<typeof Xterm>>()
-const connected = ref(false)
-const connecting = ref(false)
-const disconnecting = ref(false)
 const statusMessages = ref(['disconnected'])
-const lines = ref(0)
-const fullscreen = ref(false)
 
 const statusText = computed(() => statusMessages.value.slice(-1).pop())
 
 let platform
 let serialConsole
 
-function onXtermReady(platform: TerminalPlatform) {
+function onXtermReady(_platform: TerminalPlatform) {
 	log.info('terminal ready');
 
-	platform = platform;
+	platform = _platform;
 
 	serialConsole = new SerialPortConsole(platform.terminal, {
 		onConnecting: (options) => {
 			log.info('connecting', options);
-			connecting.value = true;
+			consoleState.connecting = true;
 
 			platform.terminal.reset();
 		},
 		onConnected: (port) => {
 			log.info('connected');
-			connecting.value = false;
-			connected.value = true;
+			consoleState.connecting = false;
+			consoleState.connected = true;
 
 			statusMessages.value.push(`connected to ${getPortMetadata(port).label}`);
 		},
 		onDisconnecting: (data) => {
 			log.info('disconnecting', data);
-			disconnecting.value = true;
+			consoleState.disconnecting = true;
 		},
 		onDisconnected: (data) => {
 			log.info('disconnected', data);
-			disconnecting.value = false;
-			connected.value = false;
+			consoleState.disconnecting = false;
+			consoleState.connected = false;
 
 			statusMessages.value.push(`disconnected`);
 		},
@@ -85,18 +89,18 @@ function onXtermTitle(title: string) {
 	document.title = `${title}`;
 }
 function onXtermLineFeed() {
-	lines.value = lines.value + 1;
+	consoleState.lines++;
 }
 function setTerminalOptions() {
-	platform.terminal.setOption('theme', Settings.themes.default);
-	platform.terminal.setOption('cursorStyle', Settings.cursorStyle);
-	platform.terminal.setOption('bellStyle', Settings.bellStyle);
-	platform.terminal.setOption('cursorBlink', Settings.cursorBlink);
-	
-	this.xterm.focus();
+	platform.terminal.setOption('theme', consoleState.themes.default);
+	platform.terminal.setOption('cursorStyle', consoleState.cursorStyle);
+	platform.terminal.setOption('bellStyle', consoleState.bellStyle);
+	platform.terminal.setOption('cursorBlink', consoleState.cursorBlink);
+
+	xterm.value?.focus();
 }
 async function toggleConsole(connected: boolean): Promise<void> {
-	const port = SerialManager.getPort(Settings.portIndex);
+	const port = SerialManager.getPort(consoleState.portIndex);
 
 	if (!port) {
 		alert('please select a port');
@@ -110,15 +114,15 @@ async function toggleConsole(connected: boolean): Promise<void> {
 	if (connected) {
 		serialConsole.disconnect();
 	} else {
-		serialConsole.echo = Settings.echo;
-		serialConsole.flushOnEnter = Settings.flushOnEnter;
+		serialConsole.echo = consoleState.echo;
+		serialConsole.flushOnEnter = consoleState.flushOnEnter;
 
 		serialConsole.connect(port, {
-			baudRate: Settings.baudRate,
-			dataBits: Settings.dataBits,
-			parity: Settings.parity,
-			stopBits: Settings.stopBits,
-			flowControl: Settings.flowControl,
+			baudRate: consoleState.baudRate,
+			dataBits: consoleState.dataBits,
+			parity: consoleState.parity,
+			stopBits: consoleState.stopBits,
+			flowControl: consoleState.flowControl,
 		});
 	}
 }
@@ -127,7 +131,7 @@ function downloadContents(): void {
 }
 function resetTerminal(): void {
 	platform.terminal.reset();
-	lines.value = 0;
+	consoleState.lines = 0;
 }
 async function requestPort(): Promise<void> {
 	try {
@@ -136,13 +140,7 @@ async function requestPort(): Promise<void> {
 		this.statusMessages.push(error.message);
 	}
 }
-function requestFullscreen() {
-	try {
-		this.xterm.$el.requestFullscreen();
-	} catch (error) {
-		log.warn('fullscreen rejected', error);
-	}
-}
+
 
 onMounted(() => {
 	SerialManager.on('connect', (data: { port: SerialPort, metadata: SerialPortMetadata}) => {

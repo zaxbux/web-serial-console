@@ -4,7 +4,7 @@ import { SearchAddon } from '@xterm/addon-search';
 import { WebLinksAddon } from '@xterm/addon-web-links';
 import { SerializeAddon } from '@xterm/addon-serialize';
 import { Unicode11Addon } from '@xterm/addon-unicode11';
-import terminalTestPattern from './utils/terminal-test-pattern';
+import terminalTestPattern from './terminal-test-pattern';
 
 
 export class TerminalPlatform {
@@ -35,7 +35,7 @@ export class TerminalPlatform {
 				}
 			}
 		}))
-		
+
 		this._terminal.loadAddon(new Unicode11Addon())
 		this._terminal.unicode.activeVersion = '11'
 	}

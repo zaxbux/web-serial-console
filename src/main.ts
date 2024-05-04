@@ -1,11 +1,20 @@
-import { createApp } from 'vue';
-import App from './App.vue';
-import './assets/main.scss';
-import { FontAwesomeIcon } from './plugins/fontawesome';
-import settings from './plugins/settings';
-import './utils/dark-mode';
+/**
+ * main.ts
+ *
+ * Bootstraps Vuetify and other plugins then mounts the App`
+ */
 
-createApp(App)
-	.use(settings)
-	.component('font-awesome-icon', FontAwesomeIcon)
-	.mount('#app');
+// Plugins
+import { registerPlugins } from '@/plugins'
+
+// Components
+import App from './App.vue'
+
+// Composables
+import { createApp } from 'vue'
+
+const app = createApp(App)
+
+registerPlugins(app)
+
+app.mount('#app')
