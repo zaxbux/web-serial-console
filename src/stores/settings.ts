@@ -33,8 +33,8 @@ export const useSettingsStore = defineStore('settings', {
       default: {
         background:    '#000000',
         foreground:    '#ffffff',
-        selectionForeground:     '#ffffff',
-        selectionBackground:     '#000000',
+        selectionForeground:     '#000000',
+        selectionBackground:     '#ffffff',
         //selectionInactiveBackground: '',
         cursor:        '#ffffff',
         cursorAccent:  '#000000',
@@ -58,8 +58,8 @@ export const useSettingsStore = defineStore('settings', {
       light: {
         background:    '#ffffff',
         foreground:    '#000000',
-        selectionForeground:     '#000000',
-        selectionBackground:     '#ffffff',
+        selectionForeground:     '#ffffff',
+        selectionBackground:     '#000000',
         //selectionInactiveBackground: '',
         cursor:        '#ffffff',
         cursorAccent:  '#000000',
