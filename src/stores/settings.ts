@@ -1,15 +1,16 @@
 // Utilities
 import { defineStore } from 'pinia'
-import SerialManager, { type SerialPortMap } from "@/utils/serial-port-manager";
+import SerialManager, { type SerialPortMetadata, type SerialPortMap } from "@/utils/serial-port-manager";
 import { useConsoleStore } from './console';
 import { StorageSerializers, useLocalStorage, useSessionStorage } from '@vueuse/core'
+import { ITheme } from '@xterm/xterm';
 
 export type CursorStyle = 'block' | 'underline' | 'bar';
 export type BellStyle = 'none' | 'visual' | 'sound' | 'both';
 
 export const useSettingsStore = defineStore('settings', {
   state: () => ({
-    ports: [],
+    ports: [] as Array<[SerialPort, SerialPortMetadata]>,
     portIndex: useSessionStorage<null | number>('portIndex',  null, { serializer: StorageSerializers.number }),
     baudRate: useLocalStorage('baudRate', 115200, { serializer: StorageSerializers.number }),
     dataBits: useLocalStorage<7 | 8>('dataBits', 8, { serializer: StorageSerializers.number }),
@@ -27,7 +28,7 @@ export const useSettingsStore = defineStore('settings', {
     fontFamily: useLocalStorage('fontFamily', 'Source Code Pro'),
     scrollback: useLocalStorage('scrollback', 10_000, { serializer: StorageSerializers.number }),
     theme: useLocalStorage('consoleTheme', 'default'),
-    themes: useLocalStorage('consoleThemes', {
+    themes: useLocalStorage<Record<string, ITheme>>('consoleThemes', {
       default: {
         background:    '#000000',
         foreground:    '#ffffff',

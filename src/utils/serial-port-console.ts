@@ -77,7 +77,7 @@ export class SerialPortConsole {
 		try {
       await this._port.open(options);
     } catch (err) {
-      this._callbacks.onConnectError(err)
+      this._callbacks.onConnectError(err as Error)
     }
 
 		this._callbacks.onConnected(port);
@@ -98,7 +98,7 @@ export class SerialPortConsole {
 				this._reader.releaseLock();
 				delete this._reader;
 			} catch (error) {
-				this._callbacks.onConnectError(error);
+				this._callbacks.onConnectError(error as Error);
 			}
 		}
 
@@ -108,7 +108,7 @@ export class SerialPortConsole {
 
 				await this._port.close();
 			} catch (error) {
-				this._callbacks.onDisconnectError(error);
+				this._callbacks.onDisconnectError(error as Error);
 			}
 
 			this._callbacks.onDisconnected({ early: true });
@@ -134,7 +134,7 @@ export class SerialPortConsole {
 
 				await localPort.close();
 			} catch (error) {
-				this._callbacks.onDisconnectError(error);
+				this._callbacks.onDisconnectError(error as Error);
 			}
 		}
 

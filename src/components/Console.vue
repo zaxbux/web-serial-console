@@ -70,7 +70,7 @@ const serialConsole = new SerialPortConsole(platform.terminal, {
     state.connecting = false;
     state.connected = true;
 
-    const portLabel = getPortMetadata(port, settings.portIndex).label /* ?? `Unlabeled Port ${settings.portIndex}` */;
+    const portLabel = getPortMetadata(port, settings.portIndex!).label /* ?? `Unlabeled Port ${settings.portIndex}` */;
 
     // Default title if port does not set one
     consoleTitle.value = portLabel;
@@ -113,7 +113,7 @@ const onSettingsChange = useDebounceFn((mutation, state) => {
 settings.$subscribe(onSettingsChange);
 
 async function toggleConsole(connected: boolean): Promise<void> {
-  const port = SerialManager.getPort(settings.portIndex);
+  const port = SerialManager.getPort(settings.portIndex!);
 
   if (!port) {
     alert("please select a port");
@@ -210,7 +210,7 @@ onMounted(async () => {
       return false
     })
 
-  platform.terminal.open(xterm.value);
+  platform.terminal.open(xterm.value!);
   nextTick(() => {
     setInterval(() => platform.fitAddon.fit(), 100);
   })

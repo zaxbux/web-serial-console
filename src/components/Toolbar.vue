@@ -132,7 +132,7 @@ import { useSettingsStore } from "@/stores/settings";
 const emit = defineEmits<{
   (event: "click:connect"): void;
   (event: "click:clear"): void;
-  (event: "click:download", mode: string): void;
+  (event: "click:download", mode: 'raw' | 'text' | 'html'): void;
 }>();
 
 const state = useConsoleStore();

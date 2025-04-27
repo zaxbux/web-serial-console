@@ -4,7 +4,7 @@ const mimeTypeExt: Record<string, string> = {
 }
 export function fauxLink(contents: string, type = 'text/plain') {
 	const linkContent = URL.createObjectURL(new Blob([
-		new TextEncoder().encode(contents).buffer
+		new TextEncoder().encode(contents).buffer as any
 	], { type }));
 	const fauxLink = document.createElement('a');
   const ext = mimeTypeExt[type] ?? 'bin'

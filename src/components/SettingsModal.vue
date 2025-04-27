@@ -35,7 +35,7 @@
               <v-row no-gutters>
                 <v-col cols="6">{{label}}</v-col>
                 <v-col >
-                  <color-picker v-model="theme[color]"/>
+                  <color-picker v-model="theme[color]!"/>
                 </v-col>
               </v-row>
             </v-col>

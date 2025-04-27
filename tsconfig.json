@@ -11,7 +11,9 @@
     },
     "resolveJsonModule": true,
     "types": [
+      "@types/w3c-web-serial",
       "vite/client",
+      "vite-plugin-vue-layouts-next/client",
       "unplugin-vue-router/client"
     ],
     "allowJs": true,

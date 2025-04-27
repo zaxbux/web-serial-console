@@ -193,20 +193,22 @@ export const deviceFilters: DeviceFilter[] = [
 	{
 		name: 'Netgate',
 		filters: [
-			{ vid: 0x067b, pid: null },
-			{ vid: 0x10c4, pid: null },
+			{ vid: 0x067b },
+			{ vid: 0x10c4 },
 		]
 	},
 	{
 		name: 'Arduino',
 		filters: [
-			{ vid: 0x2341, pid: null },
-			{ vid: 0x2a03, pid: null },
+			{ vid: 0x2341 },
+			{ vid: 0x2a03 },
 		]
 	}
 ];
 
-export function niceName(port: SerialPort, _default?: String): String | null {
+export function niceName(port: SerialPort): string | null
+export function niceName(port: SerialPort, _default: string): string
+export function niceName(port: SerialPort, _default?: string): string | null {
 	const { usbVendorId, usbProductId } = port.getInfo();
 
 	for (const vendor of vendors) {

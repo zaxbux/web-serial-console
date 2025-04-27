@@ -10,7 +10,7 @@ interface SerialEvent extends Event {
 
 export interface SerialPortMetadata {
   index: number;
-	label: String;
+	label: string;
 	info: SerialPortInfo;
 }
 
@@ -19,7 +19,7 @@ const log = new Log('serial ports');
 export class SerialPortManager extends Dispatcher {
 	private static _instance: SerialPortManager;
 
-	private _ports: SerialPortMap;
+	private _ports!: SerialPortMap;
 
 	constructor() {
 		if (!SerialPortManager._instance) {
@@ -33,7 +33,7 @@ export class SerialPortManager extends Dispatcher {
 				log.info('@connect', event);
 
 				const port = (event as SerialEvent).target;
-				const metadata = getPortMetadata(port, this._ports.has(port) ? this._ports.get(port)?.index : this._ports.size);
+				const metadata = getPortMetadata(port, this._ports.has(port) ? this._ports.get(port)!.index : this._ports.size);
 
 				this.dispatch('connect', {
 					port,
@@ -48,7 +48,7 @@ export class SerialPortManager extends Dispatcher {
 				log.info('@disconnect', event);
 
 				const port = (event as SerialEvent).target;
-				const metadata = getPortMetadata(port, this._ports.get(port)?.index);
+				const metadata = getPortMetadata(port, this._ports.get(port)!.index);
 
 				this.dispatch('disconnect', {
 					port,
@@ -92,7 +92,7 @@ export class SerialPortManager extends Dispatcher {
 
 		try {
 			const port = await navigator.serial.requestPort();
-			const portMetadata = getPortMetadata(port, this._ports.has(port) ? this._ports.get(port)?.index : this._ports.size);
+			const portMetadata = getPortMetadata(port, this._ports.has(port) ? this._ports.get(port)!.index : this._ports.size);
 
 			log.info('selected port', portMetadata);
 			this.dispatch('new', {port, portMetadata});
@@ -111,8 +111,8 @@ export class SerialPortManager extends Dispatcher {
 		return this._ports;
 	}
 
-	public getPort(index: number): SerialPort {
-		const [port, portMetadata] = Array.from(this._ports)[index];
+	public getPort(index: number): SerialPort | undefined {
+		const [port, _portMetadata] = Array.from(this._ports)[index] || [];
 
 		if (port) {
 			return port;
@@ -124,7 +124,7 @@ const manager = new SerialPortManager();
 //Object.freeze(manager);
 export default manager;
 
-export function getPortMetadata(port: SerialPort, index?: number): SerialPortMetadata {
+export function getPortMetadata(port: SerialPort, index: number): SerialPortMetadata {
   const info = port.getInfo();
 
   const vendorId = info.usbVendorId?.toString(16)
@@ -135,4 +135,4 @@ export function getPortMetadata(port: SerialPort, index?: number): SerialPortMet
 		label: niceName(port, (typeof index === 'number' ? `Port ${index} ` : '') + `[0x${vendorId}:0x${productId}]`),
 		info,
 	};
-};
+}

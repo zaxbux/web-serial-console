@@ -1,9 +1,9 @@
 class DispatcherEvent {
-	private eventName: string;
+	private _eventName: string;
 	private callbacks: any[];
 
 	constructor(eventName: string) {
-		this.eventName = eventName;
+		this._eventName = eventName;
 		this.callbacks = [];
 	}
 
@@ -24,6 +24,10 @@ class DispatcherEvent {
 			callback(data);
 		});
 	}
+
+  get eventName(): string {
+    return this._eventName
+  }
 }
 
 export class Dispatcher {

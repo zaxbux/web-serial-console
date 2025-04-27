@@ -6,7 +6,7 @@ const printableColours = 256;
  * Return a colour that contrasts with the given colour
  */
 function contrastColour(terminal: Terminal, colour: number) {
-	let r, g, b, luminance;
+	//let r, b, luminance;
 
 	// Initial 16 ANSI colours
 	if (colour < 16) {
@@ -32,7 +32,7 @@ function contrastColour(terminal: Terminal, colour: number) {
 	// See http://stackoverflow.com/a/27165165/5353461
 
 	// r=(colour-16) / 36;
-	g = ((colour - 16) % 36) / 6;
+	const g = ((colour - 16) % 36) / 6;
 	// b=(colour-16) % 6;
 
 	// If luminance is bright, print number in black, white otherwise.
@@ -68,9 +68,9 @@ function printColour(terminal: Terminal, colour: number) {
 
 /**
  * Starting at `start`, print a run of `length` colours
- * 
- * @param start 
- * @param length 
+ *
+ * @param start
+ * @param length
  */
 function printRun(terminal: Terminal, start: number, length: number) {
 	for (let i = start; i < start + length && i < printableColours; i++) {
