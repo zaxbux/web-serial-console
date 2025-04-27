@@ -1,27 +1,35 @@
 <template>
   <v-dialog v-model="dialog">
     <template #activator="{ props }">
-      <v-btn v-bind="props" title="Settings" icon="mdi-cog" />
+      <v-btn v-bind="props" v-tooltip:bottom="'Settings'" icon="mdi-cog" />
     </template>
     <template #default>
       <v-card title="Settings">
         <v-card-text>
           <v-defaults-provider :defaults="{ VSelect: { density: 'compact'}, VTextField: { density: 'compact'}, VCheckbox: { density: 'compact'}}">
             <v-row>
-            <v-col><v-select v-model="settings.cursorStyle" label="Cursor Style" :items="cursorStyleItems"/></v-col>
+            <v-col>
+              <v-select v-model="settings.cursorStyle" label="Cursor Style" :items="cursorStyleItems" prepend-inner-icon="mdi-cursor-text">
+                <template v-slot:item="{ props: itemProps, item }">
+                  <v-list-item v-bind="itemProps">
+                    <template #prepend><span :style="{ fontFamily: settings.fontFamily }" class="mr-2 text-center">{{ item.raw.prefix }}</span> </template>
+                  </v-list-item>
+                </template>
+              </v-select>
+            </v-col>
             <v-col cols="2"><v-checkbox label="Blink" v-model="settings.cursorBlink"/></v-col>
           </v-row>
 
-          <v-text-field type="number" label="Scrollback" min="0" max="10000" v-model="settings.scrollback"/>
+          <v-text-field type="number" label="Scrollback" min="0" max="10000" v-model="settings.scrollback" prepend-inner-icon="mdi-receipt-text-clock"/>
 
           <v-row>
             <v-col><v-select label="Bell Style" :items="bellStyleItems" v-model="settings.bellStyle" prepend-inner-icon="mdi-bell"/></v-col>
             <v-col cols="2"><v-checkbox label="Bell" v-model="settings.bell"/></v-col>
           </v-row>
 
-          <v-select label="Font" v-model="settings.fontFamily" :items="['Source Code Pro']"/>
+          <v-select label="Font" v-model="settings.fontFamily" :items="['Source Code Pro']" prepend-inner-icon="mdi-format-font"/>
 
-          <v-select label="Theme" v-model="settings.theme" :items="[{value: 'default', title: 'Dark'}, { value: 'light', title: 'Light'}]"/>
+          <v-select label="Theme" v-model="settings.theme" :items="[{value: 'default', title: 'Dark'}, { value: 'light', title: 'Light'}]" prepend-inner-icon="mdi-theme-light-dark"/>
           <v-row no-gutters class="gr-2">
             <v-col v-for="(label, color) in colors" :key="color" cols="6">
               <v-row no-gutters>
@@ -53,9 +61,9 @@ const settings = useSettingsStore()
 const dialog = ref(false);
 
 const cursorStyleItems = [
-  { value: 'block', title: 'block' },
-  { value: 'underline', title: 'underline' },
-  { value: 'bar', title: 'bar' },
+  { value: 'block', title: 'block', prefix: '█' },
+  { value: 'underline', title: 'underline', prefix: '_'  },
+  { value: 'bar', title: 'bar', prefix: '│' },
 ];
 
 const bellStyleItems = [

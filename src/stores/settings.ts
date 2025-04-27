@@ -2,7 +2,7 @@
 import { defineStore } from 'pinia'
 import SerialManager, { type SerialPortMap } from "@/utils/serial-port-manager";
 import { useConsoleStore } from './console';
-import { useLocalStorage, useSessionStorage } from '@vueuse/core'
+import { StorageSerializers, useLocalStorage, useSessionStorage } from '@vueuse/core'
 
 export type CursorStyle = 'block' | 'underline' | 'bar';
 export type BellStyle = 'none' | 'visual' | 'sound' | 'both';
@@ -12,20 +12,20 @@ export const useSettingsStore = defineStore('settings', {
     ports: [],
     portIndex: useSessionStorage<null | number>('portIndex',  null, { serializer: StorageSerializers.number }),
     baudRate: useLocalStorage('baudRate', 115200, { serializer: StorageSerializers.number }),
-    dataBits: useLocalStorage<7 | 8>('dataBits', 8),
+    dataBits: useLocalStorage<7 | 8>('dataBits', 8, { serializer: StorageSerializers.number }),
     parity: useLocalStorage<ParityType>('parity', 'none'),
-    stopBits: useLocalStorage<1 | 2>('stopBits', 1),
+    stopBits: useLocalStorage<1 | 2>('stopBits', 1, { serializer: StorageSerializers.number }),
     flowControl: useLocalStorage<FlowControlType>('flowControl', 'none'),
 
-    localEcho: useLocalStorage('localEcho', false),
-    flushOnEnter: useLocalStorage('flushOnEnter', false),
+    localEcho: useLocalStorage('localEcho', false, { serializer: StorageSerializers.boolean }),
+    flushOnEnter: useLocalStorage('flushOnEnter', false, { serializer: StorageSerializers.boolean }),
 
     cursorStyle: useLocalStorage<CursorStyle>('cursorStyle', 'bar'),
     cursorBlink: useLocalStorage('cursorBlink', true, { serializer: StorageSerializers.boolean }),
     bell: useLocalStorage('bell', true, { serializer: StorageSerializers.boolean }),
     bellStyle: useLocalStorage<BellStyle>('bellStyle', 'visual'),
     fontFamily: useLocalStorage('fontFamily', 'Source Code Pro'),
-    scrollback: useLocalStorage('scrollback', 10_000),
+    scrollback: useLocalStorage('scrollback', 10_000, { serializer: StorageSerializers.number }),
     theme: useLocalStorage('consoleTheme', 'default'),
     themes: useLocalStorage('consoleThemes', {
       default: {
@@ -98,7 +98,13 @@ export const useSettingsStore = defineStore('settings', {
 
         return port;
       } catch (error) {
-        state.messages.push(error.message);
+        if (error instanceof DOMException && error.name === 'NotFoundError') {
+          state.messages.push('Error: No port selected by the user.');
+        } else if (error instanceof Error) {
+          state.messages.push(error.message);
+        } else {
+          state.messages.push('requestPort() unknown error');
+        }
       }
     },
     async updatePorts() {

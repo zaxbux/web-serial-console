@@ -49,7 +49,7 @@ const log = new Log("console");
 const xterm = ref<HTMLDivElement>();
 const platform = new TerminalPlatform({
   cursorStyle: settings.cursorStyle,
-    fontFamily: settings.fontFamily,
+  fontFamily: settings.fontFamily,
   scrollback: settings.scrollback,
   theme: settings.getTheme(),
   allowProposedApi: true,
@@ -66,6 +66,7 @@ const serialConsole = new SerialPortConsole(platform.terminal, {
   },
   onConnected: (port) => {
     log.info("connected");
+    state.lines = 0;
     state.connecting = false;
     state.connected = true;
 
@@ -98,7 +99,7 @@ const serialConsole = new SerialPortConsole(platform.terminal, {
 const onSettingsChange = useDebounceFn((mutation, state) => {
   platform.terminal.options.theme = settings.getTheme();
   platform.terminal.options.cursorStyle = state.cursorStyle;
-    platform.terminal.options.cursorBlink = state.cursorBlink;
+  platform.terminal.options.cursorBlink = state.cursorBlink;
 
   serialConsole.echo = settings.localEcho;
   serialConsole.flushOnEnter = settings.flushOnEnter;
@@ -193,7 +194,7 @@ onMounted(async () => {
   platform.terminal.onLineFeed(() => {
     state.lines++;
   });
-platform.terminal.onBell(() => {
+  platform.terminal.onBell(() => {
     if (settings.bell) {
       if (settings.bellStyle == 'sound' || settings.bellStyle == 'both') {
         soundBell()
@@ -203,6 +204,11 @@ platform.terminal.onBell(() => {
       }
     }
   })
+  // Reset line count on terminal clear `^[[J`
+  platform.terminal.parser.registerCsiHandler({ final: 'J' }, () => {
+      state.lines = 1;
+      return false
+    })
 
   platform.terminal.open(xterm.value);
   nextTick(() => {
@@ -214,6 +220,15 @@ platform.terminal.onBell(() => {
   window.addEventListener("resize", () => {
     platform.fitAddon.fit();
   });
+
+  window.addEventListener('beforeunload', (e) => {
+    if (state.connected) {
+      // Cancel the event
+      e.preventDefault()
+      // // Chrome requires returnValue to be set
+      // e.returnValue = ''
+    }
+  })
 
   log.info("terminal ready");
 });

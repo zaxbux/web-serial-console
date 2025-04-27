@@ -1,5 +1,9 @@
 <template>
-  <v-btn title="toggle colour scheme" :icon="theme.global.current.value.dark ? 'mdi-brightness-4' : 'mdi-brightness-6'" @click="toggle"/>
+  <v-btn
+    v-tooltip:bottom="'Toggle colour scheme'"
+    :icon="theme.global.current.value.dark ? 'mdi-brightness-4' : 'mdi-brightness-6'"
+    @click="toggle"
+  />
 </template>
 <script setup lang="ts">
 import { useTheme } from 'vuetify';

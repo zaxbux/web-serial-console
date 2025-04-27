@@ -16,31 +16,38 @@
         v-model="settings.portIndex"
         placeholder="select a port..."
         :items="serialPorts"
+        prepend-inner-icon="mdi-connection"
       >
         <template #prepend-item>
           <v-list-item
-            append-icon="mdi-plus"
-            title="Connect"
+            prepend-icon="mdi-plus"
+            title="Request port"
             @click="settings.requestPort"
           />
           <v-divider />
+        </template>
+        <template #item="{ props: itemProps }">
+          <v-list-item v-bind="itemProps" prepend-icon="mdi-usb-port"/>
         </template>
       </v-select>
 
       <v-select
         label="Baud Rate"
-        hint="The speed at which communication should be established."
+        v-tooltip:bottom="'The speed at which communication should be established.'"
         class="pl-1 flex-grow-0 flex-shrink-0"
         min-width="16ch"
         v-model="settings.baudRate"
         :items="baudRateItems"
+        prepend-inner-icon="mdi-square-wave"
       />
     </v-defaults-provider>
 
     <v-toolbar-items>
       <v-btn
-        :icon="state.connected ? 'mdi-close-octagon' : 'mdi-power-plug'"
-        :title="state.connected ? 'disconnect' : 'connect'"
+        :icon="'mdi-power-plug'"
+        v-tooltip:bottom="state.connected ? 'Disconnect' : 'Connect'"
+        :active="state.connected"
+        :color="state.connected ? 'green' : undefined"
         :disabled="changing || settings.portIndex === null"
         @click="$emit('click:connect')"
       />
@@ -51,70 +58,34 @@
             v-bind="props"
             :disabled="changing"
             icon="mdi-wrench"
+            v-tooltip:bottom="'Port options'"
             :append-icon="isActive ? 'mdi-chevron-up' : 'mdi-chevron-down'"
           />
         </template>
         <template #default>
           <v-card>
             <v-card-text>
-              <v-defaults-provider
-                :defaults="{
-                  VCheckbox: {
-                    persistentHint: true,
-                    density: 'compact',
-                    disabled: connected,
-                  },
-                  VSelect: {
-                    persistentHint: true,
-                    density: 'compact',
-                    disabled: connected,
-                  },
-                }"
-              >
-                <v-select
-                  label="Data Bits"
-                  hint="The number of data bits in each character."
-                  v-model="settings.dataBits"
-                  :items="dataBitsItems"
-                />
-                <v-select
-                  label="Parity"
-                  hint="The method of error detection to use."
-                  v-model="settings.parity"
-                  :items="parityItems"
-                />
-                <v-select
-                  label="Stop Bits"
-                  hint="The number of stop bits at the end of each frame."
-                  v-model="settings.stopBits"
-                  :items="stopBitsItems"
-                />
-
-                <v-checkbox
-                  label="Echo"
-                  hint="Enable local echo"
-                  v-model="settings.localEcho"
-                />
-                <v-checkbox
-                  label="Flow Control"
-                  hint="Enable hardware-based flow control"
-                  v-model="settings.flowControl"
-                />
-                <v-checkbox
-                  label="Flush on enter"
-                  hint="Flush the buffer on enter instead of every key-press"
-                  v-model="settings.flushOnEnter"
-                />
-              </v-defaults-provider>
+              <btn-toggle v-model="settings.dataBits" :items="dataBitsItems" label="Data Bits" hint="The number of data bits in each character."/>
+              <v-divider class="my-1"/>
+              <btn-toggle v-model="settings.parity" :items="parityItems" label="Parity" hint="The method of error detection to use."/>
+              <v-divider class="my-1"/>
+              <btn-toggle v-model="settings.stopBits" :items="stopBitsItems" label="Stop Bits" hint="The number of stop bits at the end of each frame."/>
+              <v-divider class="my-1"/>
+              <btn-toggle v-model="settings.localEcho" :items="[{value: false, title: 'Off'}, {value: true, title: 'On'}]" label="Echo" hint="Enable local echo."/>
+              <v-divider class="my-1"/>
+              <btn-toggle v-model="settings.flowControl" :items="[{value: 'none', title: 'None'}, {value: 'hardware', title: 'Hardware'}]" label="Flow Control" hint="Enable hardware-based flow control."/>
+              <v-divider class="my-1"/>
+              <btn-toggle v-model="settings.flushOnEnter" :items="[{value: true, title: 'On'}, {value: false, title: 'Off'}]" label="Flush on enter" hint="Flush the buffer on enter instead of every key-press."/>
             </v-card-text>
           </v-card>
         </template>
       </v-menu>
+
       <v-divider vertical inset />
 
       <v-btn
         icon="mdi-close-box"
-        title="clear"
+        v-tooltip:bottom="'Clear'"
         :disabled="changing"
         @click="$emit('click:clear')"
       />
@@ -124,12 +95,12 @@
     <v-toolbar-items>
       <v-menu>
         <template #activator="{ props: btnProps }">
-      <v-btn
+          <v-btn
           v-bind="btnProps"
             v-tooltip:bottom="'Download contents of terminal'"
-        icon="mdi-download"
-        :disabled="changing"
-      />
+            icon="mdi-download"
+            :disabled="changing"
+          />
         </template>
         <template #default>
           <v-list :items="downloadItems"/>
@@ -140,7 +111,7 @@
 
       <v-btn
         v-if="isFullscreenSupported"
-        title="fullscreen"
+        v-tooltip:bottom="'Fullscreen'"
         :icon="isFullscreen ? 'mdi-fullscreen-exit' : 'mdi-fullscreen'"
         @click="toggleFullscreen"
       />
@@ -154,6 +125,7 @@ import { computed } from "vue";
 import { useFullscreen } from "@vueuse/core";
 import ColourSchemeToggle from "./ColourSchemeToggle.vue";
 import SettingsModal from "./SettingsModal.vue";
+import BtnToggle from './BtnToggle.vue'
 import { useConsoleStore } from "@/stores/console";
 import { useSettingsStore } from "@/stores/settings";
 
@@ -218,3 +190,8 @@ const downloadItems = [
   { title: 'HTML', props: { prependIcon: 'mdi-xml', onClick: () => emit('click:download', 'html') }},
 ];
 </script>
+<style lang="scss" scoped>
+.v-checkbox.v-input--density-compact {
+  --v-input-control-height: 28px;
+}
+</style>
