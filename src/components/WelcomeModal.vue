@@ -15,19 +15,19 @@
 </template>
 <script setup lang="ts">
 import { ref, watch } from "vue";
-import SerialManager from '@/utils/serial-port-manager';
 import { useAppStore } from '@/stores/app';
+import { useSettingsStore } from '../stores/settings';
 
 const appState = useAppStore()
+const settings = useSettingsStore()
 
 const modal = ref(true)
 
 async function requestPort() {
-	try {
-		await SerialManager.requestPort();
-	} catch (error) {
-		//
-	}
+  const port = await settings.requestPort();
+  if (port) {
+    modal.value = false;
+  }
 }
 
 watch(modal, (modal) => {

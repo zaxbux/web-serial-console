@@ -177,10 +177,9 @@ const {
   toggle: toggleFullscreen,
 } = useFullscreen();
 
-const serialPorts = computed(() =>
-  settings.ports.map((port, index) => ({
+const serialPorts = computed(() => settings.ports.map(([port, info], index) => ({
     value: index,
-    title: port[1].label ?? `Unlabeled Port ${index}`,
+    title: info.label,
   }))
 );
 

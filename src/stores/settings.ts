@@ -11,8 +11,8 @@ export type BellStyle = 'none' | 'visual' | 'sound' | 'both';
 export const useSettingsStore = defineStore('settings', {
   state: () => ({
     ports: [],
-    portIndex: useSessionStorage<null | number>('portIndex',  null),
-    baudRate: useLocalStorage('baudRate', 115200),
+    portIndex: useSessionStorage<null | number>('portIndex',  null, { serializer: StorageSerializers.number }),
+    baudRate: useLocalStorage('baudRate', 115200, { serializer: StorageSerializers.number }),
     dataBits: useLocalStorage<7 | 8>('dataBits', 8),
     parity: useLocalStorage<ParityType>('parity', 'none'),
     stopBits: useLocalStorage<1 | 2>('stopBits', 1),
@@ -92,7 +92,13 @@ export const useSettingsStore = defineStore('settings', {
       const state = useConsoleStore()
 
       try {
-        await SerialManager.requestPort();
+        const port = await SerialManager.requestPort();
+
+        if (SerialManager.ports.size === 1) {
+          this.portIndex = 0;
+        }
+
+        return port;
       } catch (error) {
         state.messages.push(error.message);
       }
