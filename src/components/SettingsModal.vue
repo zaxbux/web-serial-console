@@ -15,7 +15,7 @@
           <v-text-field type="number" label="Scrollback" min="0" max="10000" v-model="settings.scrollback"/>
 
           <v-row>
-            <!-- <v-col><v-file-input label="Bell Style" accept="audio/*" v-model="settings.bellStyle"/></v-col> -->
+            <v-col><v-select label="Bell Style" :items="bellStyleItems" v-model="settings.bellStyle" prepend-inner-icon="mdi-bell"/></v-col>
             <v-col cols="2"><v-checkbox label="Bell" v-model="settings.bell"/></v-col>
           </v-row>
 
@@ -56,6 +56,13 @@ const cursorStyleItems = [
   { value: 'block', title: 'block' },
   { value: 'underline', title: 'underline' },
   { value: 'bar', title: 'bar' },
+];
+
+const bellStyleItems = [
+  { value: 'none', title: 'None' },
+  { value: 'visual', title: 'Visual' },
+  { value: 'sound', title: 'Sound' },
+  { value: 'both', title: 'Both' },
 ];
 
 const colors = {

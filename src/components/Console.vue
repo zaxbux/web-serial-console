@@ -21,7 +21,7 @@
   </v-footer>
 </template>
 <script setup lang="ts">
-import { ref, computed, onMounted, nextTick } from "vue";
+import { ref, computed, onMounted, nextTick, watch } from "vue";
 import "@xterm/xterm/css/xterm.css";
 import "source-code-pro/source-code-pro.css";
 import Toolbar from "./Toolbar.vue";
@@ -36,6 +36,8 @@ import { TerminalPlatform } from "@/utils/xterm-extended";
 import { fauxLink } from "@/utils/fauxLink";
 import { useConsoleStore } from "@/stores/console";
 import { useSettingsStore } from "@/stores/settings";
+import { useDebounceFn, useThrottleFn } from '@vueuse/core'
+import { beep } from '../utils/bell';
 import { serializeBufferAsPlain } from '@/utils/serialize';
 
 
@@ -47,9 +49,7 @@ const log = new Log("console");
 const xterm = ref<HTMLDivElement>();
 const platform = new TerminalPlatform({
   cursorStyle: settings.cursorStyle,
-  bellSound: settings.bellSound,
-  //bellStyle: settings.bellStyle,
-  fontFamily: settings.fontFamily,
+    fontFamily: settings.fontFamily,
   scrollback: settings.scrollback,
   theme: settings.getTheme(),
   allowProposedApi: true,
@@ -69,7 +69,12 @@ const serialConsole = new SerialPortConsole(platform.terminal, {
     state.connecting = false;
     state.connected = true;
 
-    state.messages.push(`connected to ${getPortMetadata(port).label}`);
+    const portLabel = getPortMetadata(port, settings.portIndex).label /* ?? `Unlabeled Port ${settings.portIndex}` */;
+
+    // Default title if port does not set one
+    consoleTitle.value = portLabel;
+
+    state.messages.push(`connected to ${portLabel}`);
   },
   onDisconnecting: (data) => {
     log.info("disconnecting", data);
@@ -93,8 +98,7 @@ const serialConsole = new SerialPortConsole(platform.terminal, {
 const onSettingsChange = useDebounceFn((mutation, state) => {
   platform.terminal.options.theme = settings.getTheme();
   platform.terminal.options.cursorStyle = state.cursorStyle;
-  platform.terminal.options.bellStyle = state.bellStyle;
-  platform.terminal.options.cursorBlink = state.cursorBlink;
+    platform.terminal.options.cursorBlink = state.cursorBlink;
 
   serialConsole.echo = settings.localEcho;
   serialConsole.flushOnEnter = settings.flushOnEnter;
@@ -150,6 +154,22 @@ function resetTerminal(): void {
   state.lines = 0;
 }
 
+const consoleTitle = ref('')
+
+watch(consoleTitle, (title) => {
+  document.title = title
+})
+
+const soundBell = useThrottleFn(() => {
+  beep(20)
+}, 200)
+const visualBell = useThrottleFn(() => {
+  document.title = `🔔 ${consoleTitle.value}`
+  setTimeout(() => {
+    document.title = consoleTitle.value
+  }, 1000)
+}, 1000)
+
 onMounted(async () => {
   await settings.updatePorts();
 
@@ -168,11 +188,21 @@ onMounted(async () => {
   );
 
   platform.terminal.onTitleChange((title: string) => {
-    document.title = `${title}`;
+    consoleTitle.value = `${title}`;
   });
   platform.terminal.onLineFeed(() => {
     state.lines++;
   });
+platform.terminal.onBell(() => {
+    if (settings.bell) {
+      if (settings.bellStyle == 'sound' || settings.bellStyle == 'both') {
+        soundBell()
+      }
+      if (settings.bellStyle == 'visual' || settings.bellStyle == 'both') {
+        visualBell()
+      }
+    }
+  })
 
   platform.terminal.open(xterm.value);
   nextTick(() => {

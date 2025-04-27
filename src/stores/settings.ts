@@ -1,6 +1,5 @@
 // Utilities
 import { defineStore } from 'pinia'
-import defaultBellSound from '@/utils/default-bell-sound';
 import SerialManager, { type SerialPortMap } from "@/utils/serial-port-manager";
 import { useConsoleStore } from './console';
 import { useLocalStorage, useSessionStorage } from '@vueuse/core'
@@ -22,10 +21,9 @@ export const useSettingsStore = defineStore('settings', {
     flushOnEnter: useLocalStorage('flushOnEnter', false),
 
     cursorStyle: useLocalStorage<CursorStyle>('cursorStyle', 'bar'),
-    cursorBlink: useLocalStorage('cursorBlink', true),
-    bellSound: defaultBellSound,
-    bell: useLocalStorage('bell', false),
-    bellStyle: useLocalStorage<BellStyle>('bellStyle', 'none'),
+    cursorBlink: useLocalStorage('cursorBlink', true, { serializer: StorageSerializers.boolean }),
+    bell: useLocalStorage('bell', true, { serializer: StorageSerializers.boolean }),
+    bellStyle: useLocalStorage<BellStyle>('bellStyle', 'visual'),
     fontFamily: useLocalStorage('fontFamily', 'Source Code Pro'),
     scrollback: useLocalStorage('scrollback', 10_000),
     theme: useLocalStorage('consoleTheme', 'default'),
