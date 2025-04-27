@@ -33,7 +33,6 @@
     "@vue/eslint-config-typescript": "^13.0.0",
     "@vueuse/core": "^13.1.0",
     "@xterm/addon-fit": "^0.10.0",
-    "@xterm/addon-progress": "^0.1.0",
     "@xterm/addon-search": "^0.15.0",
     "@xterm/addon-serialize": "^0.13.0",
     "@xterm/addon-unicode11": "^0.8.0",

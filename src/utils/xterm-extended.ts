@@ -4,7 +4,7 @@ import { SearchAddon } from '@xterm/addon-search';
 import { WebLinksAddon } from '@xterm/addon-web-links';
 import { SerializeAddon } from '@xterm/addon-serialize';
 import { Unicode11Addon } from '@xterm/addon-unicode11';
-import { ProgressAddon } from '@xterm/addon-progress';
+// import { ProgressAddon } from '@xterm/addon-progress';
 import terminalTestPattern from './terminal-test-pattern';
 
 
@@ -14,7 +14,7 @@ export class TerminalPlatform {
 		fit: FitAddon,
 		search: SearchAddon,
 		serialize: SerializeAddon,
-    progress: ProgressAddon,
+    // progress: ProgressAddon,
 	};
 
 	constructor(options?: ITerminalOptions) {
@@ -24,13 +24,13 @@ export class TerminalPlatform {
 			fit: new FitAddon(),
 			search: new SearchAddon(),
 			serialize: new SerializeAddon(),
-      progress: new ProgressAddon(),
+      // progress: new ProgressAddon(),
 		};
 
 		this._terminal.loadAddon(this._addons.fit);
 		this._terminal.loadAddon(this._addons.search);
 		this._terminal.loadAddon(this._addons.serialize);
-		this._terminal.loadAddon(this._addons.progress);
+		// this._terminal.loadAddon(this._addons.progress);
 
 		this._terminal.loadAddon(new WebLinksAddon((event, uri) => {
 			if (event.ctrlKey || event.metaKey) {
@@ -84,7 +84,7 @@ export class TerminalPlatform {
 		return this._addons.serialize;
 	}
 
-  get progressAddon(): ProgressAddon {
+  /* get progressAddon(): ProgressAddon {
 		return this._addons.progress;
-	}
+	} */
 }
