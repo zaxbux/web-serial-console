@@ -15,17 +15,17 @@ interface USBVendor {
 	 * The vendor ID.
 	 */
 	id: number;
-	
+
 	/**
 	 * The name of the USB device vendor.
 	 */
 	name: string;
-	
+
 	/**
 	 * An optional alias to use instead of the name.
 	 */
 	alias?: string;
-	
+
 	/**
 	 * The device IDs that belong to this vendor ID.
 	 */
@@ -47,10 +47,21 @@ interface DeviceFilter {
  * A list of USB vendors and devices for identifying USB devices attached to a serial port.
  */
 export const vendors: USBVendorList = [
+  {
+    id: 0x0403,
+    name: 'Future Technology Devices International, Ltd',
+    alias: 'FTDI',
+    devices: [
+      {
+        id: 0x6001,
+        name: 'FT232R USB UART',
+      }
+    ],
+  },
 	{
 		id: 0x067b,
 		name: 'Prolific Technology, Inc.',
-	}, { 
+	}, {
 		id: 0x10c4,
 		name: 'Silicon Labs',
 	}, {
