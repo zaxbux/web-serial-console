@@ -122,12 +122,19 @@
 
     <v-spacer />
     <v-toolbar-items>
+      <v-menu>
+        <template #activator="{ props: btnProps }">
       <v-btn
-        title="download contents of terminal"
+          v-bind="btnProps"
+            v-tooltip:bottom="'Download contents of terminal'"
         icon="mdi-download"
-        @click="$emit('click:download')"
         :disabled="changing"
       />
+        </template>
+        <template #default>
+          <v-list :items="downloadItems"/>
+        </template>
+      </v-menu>
 
       <colour-scheme-toggle />
 
@@ -150,10 +157,10 @@ import SettingsModal from "./SettingsModal.vue";
 import { useConsoleStore } from "@/stores/console";
 import { useSettingsStore } from "@/stores/settings";
 
-defineEmits<{
+const emit = defineEmits<{
   (event: "click:connect"): void;
   (event: "click:clear"): void;
-  (event: "click:download"): void;
+  (event: "click:download", mode: string): void;
 }>();
 
 const state = useConsoleStore();
@@ -204,5 +211,11 @@ const parityItems = [
 const stopBitsItems = [
   { value: 1, title: "1" },
   { value: 2, title: "2" },
+];
+
+const downloadItems = [
+  { title: 'Raw', props: { prependIcon: 'mdi-code-block-tags', onClick: () => emit('click:download', 'raw') }},
+  { title: 'Text', props: { prependIcon: 'mdi-format-size', onClick: () => emit('click:download', 'text') }},
+  { title: 'HTML', props: { prependIcon: 'mdi-xml', onClick: () => emit('click:download', 'html') }},
 ];
 </script>

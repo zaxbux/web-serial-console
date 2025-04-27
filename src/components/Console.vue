@@ -36,7 +36,7 @@ import { TerminalPlatform } from "@/utils/xterm-extended";
 import { fauxLink } from "@/utils/fauxLink";
 import { useConsoleStore } from "@/stores/console";
 import { useSettingsStore } from "@/stores/settings";
-import { useDebounceFn } from '@vueuse/core'
+import { serializeBufferAsPlain } from '@/utils/serialize';
 
 
 const state = useConsoleStore();
@@ -130,8 +130,20 @@ async function toggleConsole(connected: boolean): Promise<void> {
     });
   }
 }
-function downloadContents(): void {
-  fauxLink(platform.serializeAddon.serialize()).click();
+function downloadContents(mode: 'raw' | 'text' | 'html'): void {
+  if (mode === 'raw') {
+    const content = platform.serializeAddon.serialize()
+    fauxLink(content).click();
+  } else if (mode === 'text') {
+    const content = serializeBufferAsPlain(platform.terminal)
+    fauxLink(content).click();
+  } else if (mode === 'html') {
+    const originalFont = platform.terminal.options.fontFamily
+    platform.terminal.options.fontFamily = 'monospace'
+    const content = platform.serializeAddon.serializeAsHTML()
+    platform.terminal.options.fontFamily = originalFont;
+    fauxLink(content, 'text/html').click();
+  }
 }
 function resetTerminal(): void {
   platform.terminal.reset();
