@@ -1,5 +1,0 @@
-{
-	"npm.scriptExplorerAction": "run",
-	"eslint.packageManager": "yarn",
-	"npm.packageManager": "yarn"
-}
