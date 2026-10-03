@@ -23,7 +23,7 @@
     "roboto-fontface": "^0.10.0",
     "source-code-pro": "^2.42.0",
     "vue": "^3.5.43",
-    "vuetify": "^3.13.5"
+    "vuetify": "^4.2.3"
   },
   "devDependencies": {
     "@babel/types": "^7.29.8",

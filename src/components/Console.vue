@@ -252,6 +252,7 @@ const fontFamily = computed(() => settings.fontFamily);
     .xterm-viewport {
       //scrollbar-width: thin;          // "auto" or "thin"
       scrollbar-color: transparent; // scroll thumb and track
+      background-color: unset;
 
       &::-webkit-scrollbar {
         width: 1rem; // width of the entire scrollbar
