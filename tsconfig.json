@@ -14,7 +14,6 @@
       "@types/w3c-web-serial",
       "vite/client",
       "vite-plugin-vue-layouts-next/client",
-      "unplugin-vue-router/client"
     ],
     "allowJs": true,
     "strict": true,
@@ -25,8 +24,14 @@
     "isolatedModules": true,
     "skipLibCheck": true
   },
+  "vueCompilerOptions": {
+    "plugins": [
+      "vue-router/volar/sfc-typed-router",
+      "vue-router/volar/sfc-route-blocks",
+    ]
+  },
   "include": [
-    "./src/typed-router.d.ts",
+    "./typed-router.d.ts",
     "./src/**/*.ts"
   ],
   "exclude": ["dist", "node_modules", "cypress"],

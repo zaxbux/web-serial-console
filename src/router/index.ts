@@ -8,8 +8,7 @@
 //import { createRouter, createWebHistory } from 'vue-router/auto'
 import { createRouter, createWebHistory } from 'vue-router'
 import { setupLayouts } from 'virtual:generated-layouts'
-import { routes } from 'vue-router/auto-routes'
-
+import { routes, handleHotUpdate } from 'vue-router/auto-routes'
 
 
 const router = createRouter({
@@ -17,5 +16,10 @@ const router = createRouter({
   //extendRoutes: setupLayouts,
   routes: setupLayouts(routes),
 })
+
+// This will update routes at runtime without reloading the page
+if (import.meta.hot) {
+  handleHotUpdate(router)
+}
 
 export default router
