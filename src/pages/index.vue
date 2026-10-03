@@ -7,20 +7,12 @@ import {useAppStore} from '@/stores/app'
 
 const appState = useAppStore()
 
-const webAPISerialSupport = "serial" in navigator;
-
-if (!webAPISerialSupport) {
-	console.error('The Web Serial API is not supported.');
-}
-
-//const showWelcome: boolean = (window.localStorage.getItem('welcome') !== 'no');
-
 onMounted(() => {
 	document.body.classList.remove('loading');
 })
 </script>
 <template>
-  <template v-if="webAPISerialSupport">
+  <template v-if="appState.webAPISerialSupport">
 		<Console />
 
 		<WelcomeModal v-if="appState.showWelcome" />
